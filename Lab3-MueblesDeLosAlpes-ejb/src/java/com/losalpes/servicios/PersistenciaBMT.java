@@ -6,11 +6,15 @@
 package com.losalpes.servicios;
 
 import com.losalpes.entities.Vendedor;
-import javax.activation.DataSource;
+import com.losalpes.excepciones.OperacionInvalidaException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
+import javax.sql.DataSource;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.NotSupportedException;
@@ -44,8 +48,38 @@ public class PersistenciaBMT implements IPersistenciaBMTLocal, IPersistenciaBMTR
         ut.rollback();
     }
 
-    public void insertRemoteDatabase(Vendedor vendedor) {
-        // TODO vendedor
+    public void insertRemoteDatabase(Vendedor vendedor) throws OperacionInvalidaException {
+        Statement stmt = null;
+        String query = "SELECT nombres FROM VENDEDORES WHERE identificacion = '" + vendedor.getIdentificacion() + "'";
+        try {
+            initTransaction();
+            stmt = dataSource.getConnection().createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            if (rs.next()) {
+                throw new OperacionInvalidaException("Ya existe el vendedor con identificacion " + vendedor.getIdentificacion());
+            } else {
+                query = "INSERT INTO VENDEDORES VALUES ('" + vendedor.getIdentificacion() + "','" + vendedor.getNombres() + "','" + vendedor.getApellidos() + "')";
+                stmt.executeUpdate(query);
+                commitTransaction();
+            }
+
+        } catch (SQLException | NotSupportedException | SystemException |
+                RollbackException | HeuristicMixedException | HeuristicRollbackException |
+                SecurityException | IllegalStateException ex) {
+            try {
+                rollBackTransaction();
+            } catch (IllegalStateException | SecurityException | SystemException ex1) {
+                ex.printStackTrace(System.out);
+            }
+        } finally {
+            if (stmt != null) {
+                try {
+                    stmt.close();
+                } catch (SQLException ex) {
+                    ex.printStackTrace(System.out);
+                }
+            }
+        }
     }
 
     public void deleteRemoteDatabase(Vendedor vendedor) {
