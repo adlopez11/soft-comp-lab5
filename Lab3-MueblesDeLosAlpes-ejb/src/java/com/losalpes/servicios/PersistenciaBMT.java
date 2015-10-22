@@ -56,6 +56,7 @@ public class PersistenciaBMT implements IPersistenciaBMTLocal, IPersistenciaBMTR
             stmt = dataSource.getConnection().createStatement();
             ResultSet rs = stmt.executeQuery(query);
             if (rs.next()) {
+                rollBackTransaction();
                 throw new OperacionInvalidaException("Ya existe el vendedor con identificacion " + vendedor.getIdentificacion());
             } else {
                 query = "INSERT INTO VENDEDORES VALUES ('" + vendedor.getIdentificacion() + "','" + vendedor.getNombres() + "','" + vendedor.getApellidos() + "')";
@@ -82,7 +83,31 @@ public class PersistenciaBMT implements IPersistenciaBMTLocal, IPersistenciaBMTR
         }
     }
 
-    public void deleteRemoteDatabase(Vendedor vendedor) {
-        // TODO vendedor
+    public void deleteRemoteDatabase(Vendedor vendedor) throws OperacionInvalidaException {
+        Statement stmt = null;
+        try {
+            initTransaction();
+            stmt = dataSource.getConnection().createStatement();
+
+            String query = "DELETE FROM VENDEDORES WHERE identificacion = '" + vendedor.getIdentificacion() + "'";
+            stmt.executeUpdate(query);
+            commitTransaction();
+
+        } catch (Exception ex) {
+            try {
+                rollBackTransaction();
+                throw new OperacionInvalidaException("Error: No se puede eliminar vendedor con identificacion " + vendedor.getIdentificacion());
+            } catch (IllegalStateException | SecurityException | SystemException ex1) {
+                ex.printStackTrace(System.out);
+            }
+        } finally {
+            if (stmt != null) {
+                try {
+                    stmt.close();
+                } catch (SQLException ex) {
+                    ex.printStackTrace(System.out);
+                }
+            }
+        }
     }
 }
