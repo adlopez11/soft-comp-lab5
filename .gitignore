@@ -4,3 +4,6 @@
 /dist/
 /Lab3-MueblesDeLosAlpes-war/dist/
 /Lab3-MueblesDeLosAlpes-war/build/
+/nbproject/private/
+/Lab3-MueblesDeLosAlpes-war/nbproject/private/
+/Lab3-MueblesDeLosAlpes-ejb/nbproject/private/
