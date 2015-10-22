@@ -5,13 +5,18 @@
  */
 package com.losalpes.servicios;
 
-import javax.ejb.Local;
+import com.losalpes.entities.Vendedor;
+import com.losalpes.excepciones.OperacionInvalidaException;
+import javax.ejb.Remote;
 
 /**
  *
  * @author ad.lopez11
  */
-@Local
+@Remote
 public interface IPersistenciaBMTRemote {
-    
+
+    void insertRemoteDatabase(Vendedor vendedor) throws OperacionInvalidaException;
+
+    void deleteRemoteDatabase(Vendedor vendedor) throws OperacionInvalidaException;
 }

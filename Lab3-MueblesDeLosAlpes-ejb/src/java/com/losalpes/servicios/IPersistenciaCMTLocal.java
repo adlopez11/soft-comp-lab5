@@ -5,6 +5,8 @@
  */
 package com.losalpes.servicios;
 
+import com.losalpes.entities.Vendedor;
+import com.losalpes.excepciones.OperacionInvalidaException;
 import javax.ejb.Local;
 
 /**
@@ -14,4 +16,7 @@ import javax.ejb.Local;
 @Local
 public interface IPersistenciaCMTLocal {
 
+    void insertRemoteDatabase(Vendedor vendedor) throws OperacionInvalidaException;
+
+    void deleteRemoteDatabase(Vendedor vendedor) throws OperacionInvalidaException;
 }

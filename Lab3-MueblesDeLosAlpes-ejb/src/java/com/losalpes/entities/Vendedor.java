@@ -1,15 +1,15 @@
 /**
- * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- * $Id$ Vendedor.java
- * Universidad de los Andes (Bogotá - Colombia)
- * Departamento de Ingeniería de Sistemas y Computación
- * Licenciado bajo el esquema Academic Free License version 3.0
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ $Id$
+ * Vendedor.java Universidad de los Andes (Bogotá - Colombia) Departamento de
+ * Ingeniería de Sistemas y Computación Licenciado bajo el esquema Academic Free
+ * License version 3.0
  *
  * Ejercicio: Muebles de los Alpes
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 package com.losalpes.entities;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
@@ -23,30 +23,28 @@ import javax.persistence.OneToMany;
  * Clase que modela un vendedor dentro del sistema.
  */
 @Entity
-public class Vendedor
-{
+public class Vendedor implements Serializable {
 
     //-----------------------------------------------------------
     // Atributos
     //-----------------------------------------------------------
-
     /**
      * Número de identificación del vendedor
      */
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
     /**
      * Nombres del vendedor.
      */
-    @Column(nullable=false)
+    @Column(nullable = false)
     private String nombres;
 
     /**
      * Apellidos del vendedor.
      */
-    @Column(nullable=false)
+    @Column(nullable = false)
     private String apellidos;
 
     /**
@@ -58,19 +56,19 @@ public class Vendedor
     /**
      * Salario del vendedor.
      */
-    @Column(nullable=false)
+    @Column(nullable = false)
     private double salario;
 
     /**
      * Comisión por ventas para el vendedor.
      */
-    @Column(nullable=false)
+    @Column(nullable = false)
     private double comisionVentas;
 
     /**
      * Perfil de vendedor.
      */
-    @Column(nullable=false)
+    @Column(nullable = false)
     private String perfil;
 
     /**
@@ -81,17 +79,16 @@ public class Vendedor
     //-----------------------------------------------------------
     // Constructor
     //-----------------------------------------------------------
-
     /**
      * Constructor sin argumentos
      */
-    public Vendedor()
-    {
+    public Vendedor() {
         experiencia = new ArrayList<ExperienciaVendedor>();
     }
 
     /**
      * Constructor con argumentos de la clase
+     *
      * @param id Identificador único del vendedor
      * @param nombres Nombre(s) del vendedor
      * @param apellidos Apellido(s) del vendedor
@@ -101,8 +98,7 @@ public class Vendedor
      * @param perfil Perfil del vendedor
      * @param foto Nombre de la foto del vendedor
      */
-    public Vendedor(long id, String nombres, String apellidos, List<ExperienciaVendedor> experiencia, double salario, double comisionVentas, String perfil, String foto)
-    {
+    public Vendedor(long id, String nombres, String apellidos, List<ExperienciaVendedor> experiencia, double salario, double comisionVentas, String perfil, String foto) {
         this.id = id;
         this.nombres = nombres;
         this.apellidos = apellidos;
@@ -116,22 +112,21 @@ public class Vendedor
     //-----------------------------------------------------------
     // Getters y setters
     //-----------------------------------------------------------
-
     /**
      * Devuelve el número único de identificación del vendedor
+     *
      * @return id Número de identificación
      */
-    public long getIdentificacion()
-    {
+    public long getIdentificacion() {
         return id;
     }
 
     /**
      * Modifica el número de identificación del cliente
+     *
      * @param id Nuevo número de identificación
      */
-    public void setIdentificacion(long id)
-    {
+    public void setIdentificacion(long id) {
         this.id = id;
     }
 
@@ -191,8 +186,7 @@ public class Vendedor
         this.salario = salario;
     }
 
-    public void setItemExperiencia(ExperienciaVendedor experiencia)
-    {
+    public void setItemExperiencia(ExperienciaVendedor experiencia) {
         this.experiencia.add(experiencia);
     }
 

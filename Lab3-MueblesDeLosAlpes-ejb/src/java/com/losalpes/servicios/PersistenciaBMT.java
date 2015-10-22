@@ -6,11 +6,13 @@
 package com.losalpes.servicios;
 
 import com.losalpes.entities.Vendedor;
+import com.losalpes.excepciones.DataBaseException;
 import com.losalpes.excepciones.OperacionInvalidaException;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
@@ -36,77 +38,107 @@ public class PersistenciaBMT implements IPersistenciaBMTLocal, IPersistenciaBMTR
     @Resource(mappedName = "jdbc/derbyDatasource")
     private DataSource dataSource;
 
-    public void initTransaction() throws NotSupportedException, SystemException {
-        ut.begin();
-    }
+    @EJB
+    private IServicioVendedoresMockLocal servicioVendedores;
 
-    public void commitTransaction() throws RollbackException, HeuristicMixedException, HeuristicRollbackException, SecurityException, IllegalStateException, SystemException {
-        ut.commit();
-    }
-
-    public void rollBackTransaction() throws IllegalStateException, SecurityException, SystemException {
-        ut.rollback();
-    }
-
-    public void insertRemoteDatabase(Vendedor vendedor) throws OperacionInvalidaException {
-        Statement stmt = null;
-        String query = "SELECT nombres FROM VENDEDORES WHERE identificacion = '" + vendedor.getIdentificacion() + "'";
+    public void initTransaction() throws DataBaseException {
         try {
-            initTransaction();
-            stmt = dataSource.getConnection().createStatement();
-            ResultSet rs = stmt.executeQuery(query);
-            if (rs.next()) {
-                rollBackTransaction();
-                throw new OperacionInvalidaException("Ya existe el vendedor con identificacion " + vendedor.getIdentificacion());
-            } else {
-                query = "INSERT INTO VENDEDORES VALUES ('" + vendedor.getIdentificacion() + "','" + vendedor.getNombres() + "','" + vendedor.getApellidos() + "')";
-                stmt.executeUpdate(query);
-                commitTransaction();
-            }
-
-        } catch (SQLException | NotSupportedException | SystemException |
-                RollbackException | HeuristicMixedException | HeuristicRollbackException |
-                SecurityException | IllegalStateException ex) {
-            try {
-                rollBackTransaction();
-            } catch (IllegalStateException | SecurityException | SystemException ex1) {
-                ex.printStackTrace(System.out);
-            }
-        } finally {
-            if (stmt != null) {
-                try {
-                    stmt.close();
-                } catch (SQLException ex) {
-                    ex.printStackTrace(System.out);
-                }
-            }
+            ut.begin();
+        } catch (NotSupportedException | SystemException ex) {
+            throw new DataBaseException(ex);
         }
     }
 
-    public void deleteRemoteDatabase(Vendedor vendedor) throws OperacionInvalidaException {
-        Statement stmt = null;
+    public void commitTransaction() throws DataBaseException {
         try {
-            initTransaction();
-            stmt = dataSource.getConnection().createStatement();
+            ut.commit();
+        } catch (RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException | SystemException ex) {
+            throw new DataBaseException(ex);
+        }
+    }
 
-            String query = "DELETE FROM VENDEDORES WHERE identificacion = '" + vendedor.getIdentificacion() + "'";
-            stmt.executeUpdate(query);
+    public void rollBackTransaction() throws DataBaseException {
+        try {
+            ut.rollback();
+        } catch (IllegalStateException | SecurityException | SystemException ex) {
+            throw new DataBaseException(ex);
+        }
+    }
+
+    @Override
+    public void insertRemoteDatabase(Vendedor vendedor) throws OperacionInvalidaException {
+
+        PreparedStatement pstmtSelect = null;
+        PreparedStatement pstmtInsert = null;
+        String querySelect = "SELECT nombres FROM VENDEDORES WHERE identificacion = ?";
+        String queryInsert = "INSERT INTO VENDEDORES (identificacion, nombres, apellidos) VALUES (?,?,?)";
+        try {
+
+            initTransaction();
+
+            pstmtSelect = dataSource.getConnection().prepareStatement(querySelect);
+            pstmtSelect.setString(1, String.valueOf(vendedor.getIdentificacion()));
+            ResultSet rs = pstmtSelect.executeQuery();
+            if (rs.next()) {
+                rollBackTransaction();
+                cerrarStatement(pstmtSelect);
+                throw new OperacionInvalidaException("Ya existe el vendedor con identificacion " + vendedor.getIdentificacion());
+            }
+            pstmtInsert = dataSource.getConnection().prepareStatement(queryInsert);
+            pstmtInsert.setString(1, String.valueOf(vendedor.getIdentificacion()));
+            pstmtInsert.setString(2, vendedor.getNombres());
+            pstmtInsert.setString(3, vendedor.getApellidos());
+            pstmtInsert.executeUpdate();
+
             commitTransaction();
 
-        } catch (Exception ex) {
+        } catch (DataBaseException | SQLException e) {
+            e.printStackTrace(System.out);
             try {
                 rollBackTransaction();
-                throw new OperacionInvalidaException("Error: No se puede eliminar vendedor con identificacion " + vendedor.getIdentificacion());
-            } catch (IllegalStateException | SecurityException | SystemException ex1) {
+            } catch (DataBaseException ex) {
                 ex.printStackTrace(System.out);
             }
         } finally {
-            if (stmt != null) {
-                try {
-                    stmt.close();
-                } catch (SQLException ex) {
-                    ex.printStackTrace(System.out);
-                }
+            cerrarStatement(pstmtSelect);
+            cerrarStatement(pstmtInsert);
+        }
+    }
+
+    @Override
+    public void deleteRemoteDatabase(Vendedor vendedor) throws OperacionInvalidaException {
+
+        PreparedStatement pstmtDelete = null;
+        String queryDelete = "DELETE FROM VENDEDORES WHERE identificacion = ?";
+
+        try {
+
+            initTransaction();
+
+            pstmtDelete = dataSource.getConnection().prepareStatement(queryDelete);
+            pstmtDelete.setString(1, String.valueOf(vendedor.getIdentificacion()));
+            pstmtDelete.executeUpdate();
+
+            commitTransaction();
+
+        } catch (DataBaseException | SQLException e) {
+            e.printStackTrace(System.out);
+            try {
+                rollBackTransaction();
+            } catch (DataBaseException ex) {
+                ex.printStackTrace(System.out);
+            }
+        } finally {
+            cerrarStatement(pstmtDelete);
+        }
+    }
+
+    private void cerrarStatement(final PreparedStatement pstmt) {
+        if (pstmt != null) {
+            try {
+                pstmt.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace(System.out);
             }
         }
     }
