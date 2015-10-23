@@ -42,6 +42,10 @@ public class PersistenciaBMT implements IPersistenciaBMTLocal, IPersistenciaBMTR
     @EJB
     private IServicioVendedoresMockLocal servicioVendedores;
 
+    /**
+     * Metodo que inicia la transaccion
+     * @throws DataBaseException 
+     */
     public void initTransaction() throws DataBaseException {
         try {
             ut.begin();
@@ -50,6 +54,10 @@ public class PersistenciaBMT implements IPersistenciaBMTLocal, IPersistenciaBMTR
         }
     }
 
+    /**
+     * Metodo que hace commit a la transaccion
+     * @throws DataBaseException 
+     */
     public void commitTransaction() throws DataBaseException {
         try {
             ut.commit();
@@ -58,6 +66,10 @@ public class PersistenciaBMT implements IPersistenciaBMTLocal, IPersistenciaBMTR
         }
     }
 
+    /**
+     * Metodo que hace rollback a la transaccion
+     * @throws DataBaseException 
+     */
     public void rollBackTransaction() throws DataBaseException {
         try {
             ut.rollback();
@@ -67,8 +79,8 @@ public class PersistenciaBMT implements IPersistenciaBMTLocal, IPersistenciaBMTR
     }
 
     /**
-     * Metodo para persisitir un vendedor en la base de datos Derby con
-     * transacciones
+     * Metodo para persisitir un vendedor en la base de datos Derby,
+     * incluye el manejo de la transaccion
      *
      * @param vendedor
      * @throws com.losalpes.excepciones.VendedorException
@@ -78,21 +90,26 @@ public class PersistenciaBMT implements IPersistenciaBMTLocal, IPersistenciaBMTR
 
         try {
 
+            //Inicia la transaccion
             initTransaction();
 
-            insertRemoteDatabaseRaw(vendedor);
+            //Agrega el vendedor a la BD Derby
+            agregarVendedorDerby(vendedor);
 
+            //Hace commit de la transaccion
             commitTransaction();
 
         } catch (SQLException | DataBaseException e) {
             e.printStackTrace(System.out);
             try {
+                //Hace rollback de la transaccion
                 rollBackTransaction();
             } catch (DataBaseException ex) {
                 ex.printStackTrace(System.out);
             }
         } catch (VendedorException e) {
             try {
+                //Hace rollback de la transaccion
                 rollBackTransaction();
             } catch (DataBaseException ex) {
                 ex.printStackTrace(System.out);
@@ -101,10 +118,65 @@ public class PersistenciaBMT implements IPersistenciaBMTLocal, IPersistenciaBMTR
         }
     }
 
+      
     /**
-     * Metodo para eliminar un vendedor en la base de datos Derby, se debe
-     * manejar la transaccion manualmente de forma externa para que metodo
-     * funcione.
+     * Metodo para persisitir un vendedor en la base de datos Derby
+     *
+     * @param vendedor
+     * @throws com.losalpes.excepciones.VendedorException
+     * @throws java.sql.SQLException
+     */
+    private void agregarVendedorDerby(Vendedor vendedor) throws VendedorException, SQLException {
+
+        PreparedStatement pstmtSelect = null;
+        PreparedStatement pstmtInsert = null;
+        
+        //Sentencias
+        String querySelect = "SELECT nombres FROM VENDEDORES WHERE identificacion = ?";
+        String queryInsert = "INSERT INTO VENDEDORES (identificacion, nombres, apellidos) VALUES (?,?,?)";
+        
+        
+        try {
+
+            pstmtSelect = dataSource.getConnection().prepareStatement(querySelect);
+            pstmtSelect.setString(1, String.valueOf(vendedor.getIdentificacion()));
+            ResultSet rs = pstmtSelect.executeQuery();
+            
+            if (rs.next()) {
+                cerrarStatement(pstmtSelect);
+                throw new VendedorException("Ya existe el vendedor con identificacion " + vendedor.getIdentificacion());
+            }
+            
+            pstmtInsert = dataSource.getConnection().prepareStatement(queryInsert);
+            pstmtInsert.setString(1, String.valueOf(vendedor.getIdentificacion()));
+            pstmtInsert.setString(2, vendedor.getNombres());
+            pstmtInsert.setString(3, vendedor.getApellidos());
+            pstmtInsert.executeUpdate();
+
+        } finally {
+            //Se liberan los recursos
+            cerrarStatement(pstmtSelect);
+            cerrarStatement(pstmtInsert);
+        }
+    }
+    
+     /**
+     * Cierra el statement
+     * @param pstmt 
+     */
+    private void cerrarStatement(final PreparedStatement pstmt) {
+        if (pstmt != null) {
+            try {
+                pstmt.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace(System.out);
+            }
+        }
+    }
+    
+    /**
+     * Metodo para eliminar un vendedor en la base de datos Derby,
+     * incluye el manejo de la transaccion
      *
      * @param vendedor
      * @throws com.losalpes.excepciones.VendedorException
@@ -114,20 +186,51 @@ public class PersistenciaBMT implements IPersistenciaBMTLocal, IPersistenciaBMTR
 
         try {
 
+            //Inicia la transaccion
             initTransaction();
 
-            deleteRemoteDatabaseRaw(vendedor);
+            //Elimina el vendedor de la BD Derby
+            deleteVendedorDerby(vendedor);
 
+            //Hace commit de la transaccion
             commitTransaction();
 
         } catch (DataBaseException | SQLException e) {
             e.printStackTrace(System.out);
             try {
+                //Hace rollback de la transaccion
                 rollBackTransaction();
             } catch (DataBaseException ex) {
                 ex.printStackTrace(System.out);
             }
             throw new VendedorException("Error al eliminar el vendedor");
+        }
+
+    }
+    
+    /**
+     * Metodo para eliminar un vendedor en la base de datos Derby sin
+     * transacciones
+     *
+     * @param vendedor
+     * @throws java.sql.SQLException
+     */
+    private void deleteVendedorDerby(Vendedor vendedor) throws SQLException {
+
+        PreparedStatement pstmtDelete = null;
+        String queryDelete = "DELETE FROM VENDEDORES WHERE identificacion = ?";
+
+        try {
+
+            pstmtDelete = dataSource.getConnection().prepareStatement(queryDelete);
+            pstmtDelete.setString(1, String.valueOf(vendedor.getIdentificacion()));
+            pstmtDelete.executeUpdate();
+
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            //Libera los recursos
+            cerrarStatement(pstmtDelete);
         }
 
     }
@@ -142,23 +245,29 @@ public class PersistenciaBMT implements IPersistenciaBMTLocal, IPersistenciaBMTR
     public void insertLocalRemoteDatabase(final Vendedor vendedor) throws VendedorException {
         try {
 
+            //Inicia la transaccion
             initTransaction();
 
+            //Agrega el vendedor en la BD Oracle
             servicioVendedores.agregarVendedor(vendedor);
 
-            insertRemoteDatabaseRaw(vendedor);
+            //Agrega el vendedor en la BD Derby
+            agregarVendedorDerby(vendedor);
 
+            //Termina la transaccion
             commitTransaction();
 
         } catch (SQLException | OperacionInvalidaException | DataBaseException ex) {
             ex.printStackTrace(System.out);
             try {
+                //Se reversa la transaccion
                 rollBackTransaction();
             } catch (DataBaseException ex1) {
                 ex1.printStackTrace(System.out);
             }
         } catch (VendedorException ex) {
             try {
+                //Se reversa la transaccion
                 rollBackTransaction();
             } catch (DataBaseException ex1) {
                 ex1.printStackTrace(System.out);
@@ -178,17 +287,22 @@ public class PersistenciaBMT implements IPersistenciaBMTLocal, IPersistenciaBMTR
 
         try {
 
+            //Inicia la transaccion
             initTransaction();
 
+            //Borra el vendedor de la BD Oracle
             servicioVendedores.eliminarVendedor(vendedor.getIdentificacion());
 
-            deleteRemoteDatabaseRaw(vendedor);
+            //Borra el vendedor de la BD Derby
+            deleteVendedorDerby(vendedor);
 
+            //Termina la transaccion
             commitTransaction();
 
         } catch (SQLException | OperacionInvalidaException | DataBaseException ex) {
             ex.printStackTrace(System.out);
             try {
+                //Hace rollback
                 rollBackTransaction();
             } catch (DataBaseException ex1) {
                 ex1.printStackTrace(System.out);
@@ -196,77 +310,5 @@ public class PersistenciaBMT implements IPersistenciaBMTLocal, IPersistenciaBMTR
             throw new VendedorException("No se puede insertar el vendedor");
         }
     }
-
-    /**
-     * Metodo para persisitir un vendedor en la base de datos Derby sin
-     * transacciones
-     *
-     * @param vendedor
-     * @throws com.losalpes.excepciones.VendedorException
-     * @throws java.sql.SQLException
-     */
-    private void insertRemoteDatabaseRaw(Vendedor vendedor) throws VendedorException, SQLException {
-
-        PreparedStatement pstmtSelect = null;
-        PreparedStatement pstmtInsert = null;
-        String querySelect = "SELECT nombres FROM VENDEDORES WHERE identificacion = ?";
-        String queryInsert = "INSERT INTO VENDEDORES (identificacion, nombres, apellidos) VALUES (?,?,?)";
-        try {
-
-            pstmtSelect = dataSource.getConnection().prepareStatement(querySelect);
-            pstmtSelect.setString(1, String.valueOf(vendedor.getIdentificacion()));
-            ResultSet rs = pstmtSelect.executeQuery();
-            if (rs.next()) {
-                cerrarStatement(pstmtSelect);
-                throw new VendedorException("Ya existe el vendedor con identificacion " + vendedor.getIdentificacion());
-            }
-            pstmtInsert = dataSource.getConnection().prepareStatement(queryInsert);
-            pstmtInsert.setString(1, String.valueOf(vendedor.getIdentificacion()));
-            pstmtInsert.setString(2, vendedor.getNombres());
-            pstmtInsert.setString(3, vendedor.getApellidos());
-            pstmtInsert.executeUpdate();
-
-        } catch (SQLException e) {
-            throw e;
-        } finally {
-            cerrarStatement(pstmtSelect);
-            cerrarStatement(pstmtInsert);
-        }
-    }
-
-    /**
-     * Metodo para eliminar un vendedor en la base de datos Derby sin
-     * transacciones
-     *
-     * @param vendedor
-     * @throws java.sql.SQLException
-     */
-    private void deleteRemoteDatabaseRaw(Vendedor vendedor) throws SQLException {
-
-        PreparedStatement pstmtDelete = null;
-        String queryDelete = "DELETE FROM VENDEDORES WHERE identificacion = ?";
-
-        try {
-
-            pstmtDelete = dataSource.getConnection().prepareStatement(queryDelete);
-            pstmtDelete.setString(1, String.valueOf(vendedor.getIdentificacion()));
-            pstmtDelete.executeUpdate();
-
-        } catch (SQLException e) {
-            throw e;
-        } finally {
-            cerrarStatement(pstmtDelete);
-        }
-
-    }
-
-    private void cerrarStatement(final PreparedStatement pstmt) {
-        if (pstmt != null) {
-            try {
-                pstmt.close();
-            } catch (SQLException ex) {
-                ex.printStackTrace(System.out);
-            }
-        }
-    }
+    
 }

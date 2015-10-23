@@ -66,9 +66,11 @@ public class PersistenciaCMT implements IPersistenciaCMTLocal, IPersistenciaCMTR
             pstmtInsert.executeUpdate();
 
         } catch (SQLException e) {
+            //Ejecucion del rollback
             sctx.setRollbackOnly();
             e.printStackTrace(System.out);
         } finally {
+            //Libera los recursos
             cerrarStatement(pstmtSelect);
             cerrarStatement(pstmtInsert);
         }
@@ -92,9 +94,11 @@ public class PersistenciaCMT implements IPersistenciaCMTLocal, IPersistenciaCMTR
             pstmtDelete.executeUpdate();
 
         } catch (SQLException e) {
+            //Ejecucion del rollback
             sctx.setRollbackOnly();
             throw new VendedorException("No se puede insertar el vendedor");
         } finally {
+            //Libera los recursos
             cerrarStatement(pstmtDelete);
         }
     }
@@ -109,14 +113,18 @@ public class PersistenciaCMT implements IPersistenciaCMTLocal, IPersistenciaCMTR
     public void insertLocalRemoteDatabase(final Vendedor vendedor) throws VendedorException {
         try {
 
+            //Inserta el vendedor en la BD Oracle
             servicioVendedores.agregarVendedor(vendedor);
 
+            //Inserta el vendedor en la BD Derby
             insertRemoteDatabase(vendedor);
 
         } catch (OperacionInvalidaException ex) {
             ex.printStackTrace(System.out);
+             //Ejecucion del rollback
             sctx.setRollbackOnly();
         } catch (VendedorException ex) {
+             //Ejecucion del rollback
             sctx.setRollbackOnly();
             throw ex;
         }
@@ -132,17 +140,24 @@ public class PersistenciaCMT implements IPersistenciaCMTLocal, IPersistenciaCMTR
     public void deleteLocalRemoteDatabase(final Vendedor vendedor) throws VendedorException {
         try {
 
+            //Borra el vendedor de la BD Oracle
             servicioVendedores.eliminarVendedor(vendedor.getIdentificacion());
 
+            //Borra el vendedor de la BD Derby
             deleteRemoteDatabase(vendedor);
 
         } catch (VendedorException | OperacionInvalidaException ex) {
+            //Ejecucion del rollback
             sctx.setRollbackOnly();
             ex.printStackTrace(System.out);
             throw new VendedorException("No se puede insertar el vendedor");
         }
     }
 
+    /**
+     * Metodo que cierra el statement
+     * @param pstmt 
+     */
     private void cerrarStatement(final PreparedStatement pstmt) {
         if (pstmt != null) {
             try {
