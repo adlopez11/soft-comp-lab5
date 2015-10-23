@@ -11,7 +11,7 @@
 package com.losalpes.servicios;
 
 import com.losalpes.entities.Vendedor;
-import com.losalpes.excepciones.OperacionInvalidaException;
+import com.losalpes.excepciones.VendedorException;
 import java.util.Properties;
 import javax.naming.InitialContext;
 import static org.junit.Assert.assertFalse;
@@ -54,46 +54,102 @@ public class PersistenciaBMTTest {
         }
     }
 
+    /**
+     * Prueba para insertar y borrar un registro en la base de datos derby
+     *
+     * @throws Exception
+     */
     @Test
     public void testInsertRemoteDatabase1() throws Exception {
         Vendedor vendedor = new Vendedor();
         vendedor.setIdentificacion(1l);
         vendedor.setNombres("Andres");
         vendedor.setApellidos("Castro");
+
         servicio.insertRemoteDatabase(vendedor);
+
+        servicio.deleteRemoteDatabase(vendedor);
     }
 
+    /**
+     * Prueba para verificar que no inserte en la base de datos derby si ya
+     * existe el vendedor
+     *
+     * @throws Exception
+     */
     @Test
     public void testInsertRemoteDatabase2() throws Exception {
         Vendedor vendedor = new Vendedor();
-        vendedor.setIdentificacion(2l);
+        vendedor.setIdentificacion(1l);
         vendedor.setNombres("Andres");
         vendedor.setApellidos("Castro");
+        vendedor.setComisionVentas(100l);
+        vendedor.setPerfil("Profesionakl");
+        vendedor.setSalario(1000000l);
         servicio.insertRemoteDatabase(vendedor);
+
         boolean registroRepetido;
         try {
             // Intenta nuevamente insertar y debería generar una excepción
             servicio.insertRemoteDatabase(vendedor);
             registroRepetido = true;
-        } catch (OperacionInvalidaException ex) {
+        } catch (VendedorException ex) {
             registroRepetido = false;
         }
+
+        servicio.deleteRemoteDatabase(vendedor);
+
         assertFalse(registroRepetido);
     }
 
+    /**
+     * Prueba para insertar y borrar en ambas bases de datos el vendedor
+     *
+     * @throws Exception
+     */
     @Test
-    public void deleteRemoteDatabase() throws Exception {
+    public void testInsertLocalRemoteDatabase1() throws Exception {
         Vendedor vendedor = new Vendedor();
         vendedor.setIdentificacion(1l);
         vendedor.setNombres("Andres");
         vendedor.setApellidos("Castro");
-        servicio.deleteRemoteDatabase(vendedor);
+        vendedor.setComisionVentas(100l);
+        vendedor.setPerfil("Profesional");
+        vendedor.setSalario(1000000l);
+        servicio.insertLocalRemoteDatabase(vendedor);
 
-        Vendedor vendedor2 = new Vendedor();
-        vendedor2.setIdentificacion(2l);
-        vendedor2.setNombres("Andres");
-        vendedor2.setApellidos("Castro");
-        servicio.deleteRemoteDatabase(vendedor2);
+        servicio.deleteLocalRemoteDatabase(vendedor);
+    }
+
+    /**
+     * Prueba para verificar que no inserte en la base de datos derby si ya
+     * existe el vendedor
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testInsertLocalRemoteDatabase2() throws Exception {
+        Vendedor vendedor = new Vendedor();
+        vendedor.setIdentificacion(1l);
+        vendedor.setNombres("Andres");
+        vendedor.setApellidos("Castro");
+        vendedor.setComisionVentas(100l);
+        vendedor.setPerfil("Profesionakl");
+        vendedor.setSalario(1000000l);
+        servicio.insertLocalRemoteDatabase(vendedor);
+
+        boolean registroRepetido;
+        try {
+            // Intenta nuevamente insertar y debería generar una excepción
+            servicio.insertLocalRemoteDatabase(vendedor);
+            registroRepetido = true;
+        } catch (VendedorException ex) {
+            registroRepetido = false;
+        }
+
+        servicio.deleteLocalRemoteDatabase(vendedor);
+
+        assertFalse(registroRepetido);
     }
 
 }

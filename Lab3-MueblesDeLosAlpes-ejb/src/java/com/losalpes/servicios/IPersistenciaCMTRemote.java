@@ -6,7 +6,7 @@
 package com.losalpes.servicios;
 
 import com.losalpes.entities.Vendedor;
-import com.losalpes.excepciones.OperacionInvalidaException;
+import com.losalpes.excepciones.VendedorException;
 import javax.ejb.Remote;
 
 /**
@@ -16,7 +16,11 @@ import javax.ejb.Remote;
 @Remote
 public interface IPersistenciaCMTRemote {
 
-    void insertRemoteDatabase(Vendedor vendedor) throws OperacionInvalidaException;
+    void insertRemoteDatabase(Vendedor vendedor) throws VendedorException;
 
-    void deleteRemoteDatabase(Vendedor vendedor) throws OperacionInvalidaException;
+    void deleteRemoteDatabase(Vendedor vendedor) throws VendedorException;
+
+    void insertLocalRemoteDatabase(Vendedor vendedor) throws VendedorException;
+
+    void deleteLocalRemoteDatabase(Vendedor vendedor) throws VendedorException;
 }
