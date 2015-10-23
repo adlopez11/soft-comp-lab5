@@ -1,0 +1,11 @@
+Create table TarjetaCreditoAlpes(
+id integer,
+numero varchar(50),
+nombre_titular varchar(50),
+nombre_banco varchar(50),
+cupo integer,
+fecha_expedicion Date,
+fecha_vencimiento Date,
+id_cliente integer,
+PRIMARY KEY(id)
+);

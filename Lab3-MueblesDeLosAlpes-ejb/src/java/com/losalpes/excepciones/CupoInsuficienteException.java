@@ -1,6 +1,6 @@
 /**
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ $Id$
- * VendedorException.java Universidad de los Andes (Bogotá - Colombia)
+ * CupoInsuficienteException.java Universidad de los Andes (Bogotá - Colombia)
  * Departamento de Ingeniería de Sistemas y Computación Licenciado bajo el
  * esquema Academic Free License version 3.0
  *
@@ -10,12 +10,15 @@
  */
 package com.losalpes.excepciones;
 
+import javax.ejb.ApplicationException;
+
 /**
- * Clase de excepción que se presenta cuando se viola alguna restricción de
- * Vendedor
+ * Clase de excepción que se presenta cuando no hay cupo suficiente en la 
+ * tarjeta de credito
  *
  */
-public class VendedorException extends Exception {
+@ApplicationException(rollback=true)
+public class CupoInsuficienteException extends Exception {
 
     // -----------------------------------------------
     // Constructor
@@ -25,7 +28,7 @@ public class VendedorException extends Exception {
      *
      * @param mensaje Mensaje de la excepción
      */
-    public VendedorException(String mensaje) {
+    public CupoInsuficienteException(String mensaje) {
         super(mensaje);
     }
 }
