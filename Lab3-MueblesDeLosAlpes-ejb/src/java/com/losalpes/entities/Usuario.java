@@ -13,6 +13,7 @@ package com.losalpes.entities;
 
 import java.io.Serializable;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -81,7 +82,7 @@ public class Usuario implements Serializable
     /**
      * Ciudad de residencia del usuario
      */
-    @OneToOne
+    @OneToOne(cascade=CascadeType.PERSIST)
     @JoinColumn(name="FK_CIUDAD")
     private Ciudad ciudad;
 
@@ -129,9 +130,9 @@ public class Usuario implements Serializable
 
     /**
      * Constructor de la clase con argumentos
-     * @param nombre Nombre del usuario
+     * @param login Login
      * @param contraseña Constraseña del usuario
-     * @param tipo Tipo de usuario
+     * @param tipoUsuario Tipo de usuario
      */
     public Usuario(String login, String contraseña, TipoUsuario tipoUsuario)
     {
@@ -192,7 +193,7 @@ public class Usuario implements Serializable
 
     /**
      * Modifica el tipo de usuario
-     * @param tipo Nuevo tipo de usuario
+     * @param tipoUsuario Nuevo tipo de usuario
      */
     public void setTipoUsuario(TipoUsuario tipoUsuario)
     {

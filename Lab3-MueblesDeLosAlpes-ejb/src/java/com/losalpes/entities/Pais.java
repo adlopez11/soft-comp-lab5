@@ -10,6 +10,7 @@
  */
 package com.losalpes.entities;
 
+import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -19,7 +20,7 @@ import javax.persistence.OneToMany;
  * Clase que representa un país en el sistema
  */
 @Entity
-public class Pais
+public class Pais implements Serializable
 {
 
     //-----------------------------------------------------------

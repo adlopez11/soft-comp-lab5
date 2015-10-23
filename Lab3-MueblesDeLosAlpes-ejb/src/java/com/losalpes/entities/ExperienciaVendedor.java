@@ -11,18 +11,18 @@
 
 package com.losalpes.entities;
 
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 /**
  * Clase que modela un ìtem de experiencia de vendedor.
  */
 @Entity
-public class ExperienciaVendedor
+public class ExperienciaVendedor implements Serializable
 {
 
     //-----------------------------------------------------------

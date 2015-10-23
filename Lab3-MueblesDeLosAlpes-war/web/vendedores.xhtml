@@ -63,7 +63,7 @@
                         </div>
                         <div class="ui-grid ui-grid-responsive">
                             <div class="ui-grid-row">
-                                <div class="ui-grid-col-12">
+                                <div class="ui-grid-col-6">
                                     <p:outputLabel for="TxtAño"
                                                    value="Año"
                                                    style="font-weight: bold"/>
@@ -75,6 +75,20 @@
                                         <f:validateLength minimum="4"/>
                                     </p:inputText>
                                     <p:message id="anoMsg" for="TxtAño" />
+                                </div>
+                                <div class="ui-grid-col-6">
+                                    <p:outputLabel for="TxtDescripcion"
+                                                   value="Descripcion"
+                                                   style="font-weight: bold"/>
+                                    <p:inputTextarea id="TxtDescripcion"
+                                                     rows="4"
+                                                     style="width: 125px"
+                                                     value="#{vendedorBean.experiencia.descripcion}"
+                                                     required="true"
+                                                     label="Descripcion">
+                                        <f:validateLength minimum="5"/>
+                                    </p:inputTextarea>
+                                    <p:message id="DescMsg" for="TxtDescripcion" />
                                 </div>
                             </div>
                         </div> 

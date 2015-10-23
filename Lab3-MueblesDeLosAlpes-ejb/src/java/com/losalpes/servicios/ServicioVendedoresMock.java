@@ -29,11 +29,17 @@ public class ServicioVendedoresMock implements IServicioVendedoresMockRemote, IS
     // Atributos
     //-----------------------------------------------------------
     
+    
+    
+    @EJB
+    private IPersistenciaCMTLocal persistencia;
+    
     /**
      * Interface con referencia al servicio de persistencia en el sistema
-     */
+     *
+    */
     @EJB
-    private IServicioPersistenciaMockLocal persistencia;
+    private IServicioPersistenciaMockLocal persistencia2;
 
     //-----------------------------------------------------------
     // Constructor
@@ -53,19 +59,28 @@ public class ServicioVendedoresMock implements IServicioVendedoresMockRemote, IS
     /**
      * Agrega un vendedor al sistema
      * @param vendedor Nuevo vendedor
-     * @throws OperacionInvalidaException Excepción lanzada en caso de error
+     * @throws com.losalpes.excepciones.OperacionInvalidaException
      */
     @Override
-    public void agregarVendedor(Vendedor vendedor) throws OperacionInvalidaException
+    public void agregarVendedor(Vendedor vendedor) throws OperacionInvalidaException 
     {
+        
         try
         {
-            persistencia.create(vendedor);
+            persistencia2.create(vendedor);
         }
         catch (OperacionInvalidaException ex)
         {
             throw new OperacionInvalidaException(ex.getMessage());
         }
+        /*
+        try
+        {
+            persistencia.insertLocalRemoteDatabase(vendedor);
+            
+        } catch (VendedorException ex) {
+          ex.printStackTrace(System.out);
+        }*/
     }
 
     /**
@@ -76,14 +91,24 @@ public class ServicioVendedoresMock implements IServicioVendedoresMockRemote, IS
     @Override
     public void eliminarVendedor(long id) throws OperacionInvalidaException
     {
-        Vendedor v=(Vendedor) persistencia.findById(Vendedor.class, id);
+       Vendedor v=(Vendedor) persistencia2.findById(Vendedor.class, id);
         try
         {
-            persistencia.delete(v);
+            persistencia2.delete(v);
         } catch (OperacionInvalidaException ex)
         {
             throw new OperacionInvalidaException(ex.getMessage());
         }
+        
+        /* Vendedor v = new Vendedor();
+        v.setIdentificacion(id);
+        
+        try {
+            persistencia.deleteLocalRemoteDatabase(v);
+        } catch (VendedorException ex) {
+             ex.printStackTrace(System.out);
+        }*/
+        
     }
 
     /**
@@ -93,7 +118,7 @@ public class ServicioVendedoresMock implements IServicioVendedoresMockRemote, IS
     @Override
     public List<Vendedor> getVendedores()
     {
-        return persistencia.findAll(Vendedor.class);
+        return persistencia2.findAll(Vendedor.class);
     }
 
 }

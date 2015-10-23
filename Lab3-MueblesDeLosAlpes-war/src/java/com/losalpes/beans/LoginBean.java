@@ -16,7 +16,6 @@ import com.losalpes.entities.TipoUsuario;
 import com.losalpes.entities.Usuario;
 import com.losalpes.excepciones.AutenticacionException;
 import com.losalpes.servicios.IServicioSeguridadMockLocal;
-import com.losalpes.servicios.ServicioSeguridadMock;
 import java.io.Serializable;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
