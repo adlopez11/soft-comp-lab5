@@ -1,15 +1,13 @@
 /**
- * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- * $Id$ IServicioRegistroMockLocal.java
- * Universidad de los Andes (Bogotá - Colombia)
- * Departamento de Ingeniería de Sistemas y Computación
- * Licenciado bajo el esquema Academic Free License version 3.0
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ $Id$
+ * IServicioRegistroMockLocal.java Universidad de los Andes (Bogotá - Colombia)
+ * Departamento de Ingeniería de Sistemas y Computación Licenciado bajo el
+ * esquema Academic Free License version 3.0
  *
  * Ejercicio: Muebles de los Alpes
- * 
+ *
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
-
 package com.losalpes.servicios;
 
 import com.losalpes.entities.Usuario;
@@ -18,19 +16,21 @@ import java.util.List;
 
 /**
  * Contrato funcional de los servicios de autenticación en el sistema
- * 
+ *
  */
-public interface IServicioRegistroMockLocal
-{
+public interface IServicioRegistroMockLocal {
 
     /**
      * Verifica y registra un usuario en el sistema
+     *
      * @param u Usuario a persistir
+     * @param tarjeta
      */
-    public void registrar(Usuario u)throws OperacionInvalidaException;
+    public void registrar(Usuario u) throws OperacionInvalidaException;
 
     /**
      * Elimina un cliente del sistema dado su login
+     *
      * @param login Login único del usuario
      * @throws OperacionInvalidaException Excepción en caso de error operacional
      */
@@ -38,8 +38,9 @@ public interface IServicioRegistroMockLocal
 
     /**
      * Devuelve todos los clientes del sistema
+     *
      * @return usuarios Lista con todos los usuarios del sistema
      */
     public List<Usuario> darClientes();
-   
+
 }

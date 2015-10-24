@@ -13,16 +13,21 @@ package com.losalpes.beans;
 import com.losalpes.entities.Ciudad;
 import com.losalpes.entities.Pais;
 import com.losalpes.entities.Profesion;
+import com.losalpes.entities.TarjetaCreditoAlpes;
 import com.losalpes.entities.TipoDocumento;
 import com.losalpes.entities.TipoUsuario;
 import com.losalpes.entities.Usuario;
 import com.losalpes.excepciones.OperacionInvalidaException;
+import com.losalpes.servicios.IPersistenciaCMTLocal;
 import com.losalpes.servicios.IServicioRegistroMockLocal;
 import com.losalpes.servicios.ServicioRegistroMock;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -45,6 +50,9 @@ public class RegistroBean implements Serializable {
     @EJB
     private IServicioRegistroMockLocal usuarioServices;
 
+    @EJB
+    private IPersistenciaCMTLocal persistenciaCMTService;
+
     /**
      * Mensaje utilizado para mostrar información importante al usuario.
      */
@@ -55,6 +63,12 @@ public class RegistroBean implements Serializable {
      * almacenan los datos del cliente.
      */
     private Usuario usuario;
+
+    /**
+     * Referencia al objeto de la tarjeta que se está mostrando al cliente. En
+     * este objeto se almacenan los datos de la tarjeta de credito
+     */
+    private TarjetaCreditoAlpes tarjeta;
 
     /**
      * País seleccionado en el registro
@@ -96,6 +110,7 @@ public class RegistroBean implements Serializable {
         ciudades = new ArrayList<Ciudad>();
         mostrarVentana = false;
         usuario = new Usuario();
+        tarjeta = new TarjetaCreditoAlpes();
 
         ArrayList<Ciudad> array = new ArrayList<Ciudad>();
         array.add(new Ciudad("Bogotá"));
@@ -305,6 +320,14 @@ public class RegistroBean implements Serializable {
         ciudades = pais.getCiudades();
     }
 
+    public void cambioTipoUsuario(ValueChangeEvent event) {
+        usuario.setTipoUsuario((TipoUsuario) event.getNewValue());
+    }
+
+    public boolean isTipoCliente() {
+        return usuario.getTipoUsuario() != null && usuario.getTipoUsuario().equals(TipoUsuario.Cliente);
+    }
+
     /**
      * Crea un usuario con los datos proporcionados por el cliente.
      *
@@ -315,7 +338,9 @@ public class RegistroBean implements Serializable {
             if (usuario.getTipoUsuario() == null) {
                 usuario.setTipoUsuario(TipoUsuario.Cliente);
             }
-            usuarioServices.registrar(usuario);
+            completarTarjeta();
+
+            persistenciaCMTService.registrarUsarioTarjeta(usuario, tarjeta);
             mensaje = "Su cuenta ha sido creada exitosamente asi como su tarjeta MueblesDeLosAlpes.";
             mostrarVentana = true;
             destroyBean();
@@ -336,10 +361,15 @@ public class RegistroBean implements Serializable {
     public void registrarAdministrador() {
         try {
 
-            usuarioServices.registrar(usuario);
             if (usuario.getTipoUsuario().equals(TipoUsuario.Cliente)) {
+
+                completarTarjeta();
+                persistenciaCMTService.registrarUsarioTarjeta(usuario, tarjeta);
+
                 mensaje = "Su cuenta ha sido creada exitósamente asi como su tarjeta MueblesDeLosAlpes.";
             } else {
+
+                usuarioServices.registrar(usuario);
                 mensaje = "Su cuenta ha sido creada exitósamente.";
             }
 
@@ -352,6 +382,23 @@ public class RegistroBean implements Serializable {
             mostrarVentana = true;
 
         }
+    }
+
+    private void completarTarjeta() {
+        tarjeta.setId(usuario.getLogin());
+        tarjeta.setDocumentoTitular(usuario.getDocumento());
+        tarjeta.setFechaExpedicion(new Date());
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(tarjeta.getFechaExpedicion());
+        calendar.add(Calendar.YEAR, 2);
+
+        tarjeta.setFechaVencimiento(calendar.getTime());
+        tarjeta.setNombreTitular(usuario.getNombreCompleto());
+        tarjeta.setSaldo(tarjeta.getCupo());
+
+        Random rnd = new Random();
+        tarjeta.setNumero(String.valueOf((int) (rnd.nextDouble() * 1000000)));
     }
 
     public List<Usuario> getClientes() {
@@ -396,6 +443,11 @@ public class RegistroBean implements Serializable {
      */
     public void limpiar() {
         usuario = new Usuario();
+        tarjeta = new TarjetaCreditoAlpes();
+    }
+
+    public TarjetaCreditoAlpes getTarjeta() {
+        return tarjeta;
     }
 
 }

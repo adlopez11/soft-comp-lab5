@@ -24,8 +24,8 @@
             </h:form>
 
             <h:form>
-                <p:accordionPanel id="accordionPanelCliente">
-                    <p:tab title="Registro de usuario">
+                <p:accordionPanel id="accordionPanelCliente" style="width: 800px;">
+                    <p:tab  title="Registro de usuario" titleStyle="width: 800px;" >
                         <div class="ui-grid ui-grid-responsive">
                             <div class="ui-grid-row">
                                 <div class="ui-grid-col-6">
@@ -207,11 +207,49 @@
                                     <p:selectOneMenu id="TxtUser"
                                                      value="#{registroBean.usuario.tipoUsuario}"
                                                      label="Tipo Usuario">
+                                        <p:ajax event="change" process="@this" update="tarjeta_pnl"/>
                                         <f:selectItems value="#{registroBean.tiposUsuario}" />
                                     </p:selectOneMenu>
+                                    <p:message id="messagetu" for="TxtUser"/>
                                 </div>
                             </div>
                         </div>
+                        <br/>
+                        <p:panel id="tarjeta_pnl">
+                            <p:panel id="tar_pnl" header="Datos TarjetaCreditoAlpes" rendered="#{registroBean.tipoCliente}">
+                                <div class="ui-grid ui-grid-responsive">
+                                    <div class="ui-grid-row">
+                                        <div class="ui-grid-col-6">
+                                            <p:outputLabel for="banco_txt"
+                                                           value="Banco"
+                                                           style="font-weight: bold"/>
+                                            <p:selectOneMenu id="banco_txt" required="true"
+                                                             value="#{registroBean.tarjeta.nombreBanco}"
+                                                             label="Banco">
+                                                <f:selectItem itemLabel="Banco Caja Social" itemValue="Banco Caja Social" />
+                                                <f:selectItem itemLabel="Bancolombia" itemValue="Bancolombia" />
+                                                <f:selectItem itemLabel="Davivienda" itemValue="Davivienda" />
+                                                <f:selectItem itemLabel="CitiBank" itemValue="CitiBank" />
+                                            </p:selectOneMenu>
+                                            <p:message id="messagebanc" for="banco_txt"/>
+                                        </div>
+                                        <div class="ui-grid-col-6">
+                                            <p:outputLabel for="cupo_txt" value="Cupo" style="font-weight: bold" />
+                                            <p:inputText value="#{registroBean.tarjeta.cupo}" required="true"
+                                                         id="cupo_txt">
+                                                <f:validateLength minimum="6" />
+                                            </p:inputText>
+                                            <p:message for="cupo_txt" display="text" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <br/><br/>
+                                <div align="justify">
+                                    <p:outputLabel id="MessID" value="Le será asiganada una tarjeta TarjetaCreditoAlpes a su nombre con el cupo solicitado en el Banco seleccionado, con una fecha de vencimiento de 2 años a partir de este momento" style="font-weight: bold" />
+                                </div>
+                            </p:panel>
+                        </p:panel>
+
                     </p:tab>
                 </p:accordionPanel>
 

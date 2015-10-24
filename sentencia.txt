@@ -1,12 +1,19 @@
 Create table TarjetaCreditoAlpes(
-id integer,
+id varchar(50),
 numero varchar(50),
-nombre_titular varchar(50),
-nombre_banco varchar(50),
-cupo integer,
-saldo integer,
+nombre_titular varchar(100),
+documento_titular bigint,
+nombre_banco varchar(100),
+cupo bigint,
+saldo bigint,
 fecha_expedicion Date,
 fecha_vencimiento Date,
-id_cliente integer,
 PRIMARY KEY(id)
 );
+
+Create table vendedores(
+identificacion varchar(50),
+nombres varchar(70),
+apellidos varchar(70),
+PRIMARY KEY(identificacion)
+)
