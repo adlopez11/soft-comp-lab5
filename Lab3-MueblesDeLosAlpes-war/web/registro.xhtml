@@ -12,7 +12,7 @@
     <ui:param name="titulo" value="Catálogo de muebles" />
     <ui:define name="body">
         <h:form>
-            Formulario de registro  
+            Formulario de registro
             <p:accordionPanel>
                 <p:tab title="Registro de usuario">
                     <div class="ui-grid ui-grid-responsive">
@@ -22,11 +22,11 @@
                                 <p:inputText value="#{registroBean.usuario.documento}" required="true"
                                              id="TxtID">
                                     <f:validateLength minimum="5" />
-                                </p:inputText> 
+                                </p:inputText>
                                 <p:message for="TxtID" display="text" />
                             </div>
                             <div class="ui-grid-col-6">
-                                <h:selectOneMenu label="Tipo de Documento" 
+                                <h:selectOneMenu label="Tipo de Documento"
                                                  value="#{registroBean.usuario.tipoDocumento}">
                                     <f:selectItems value="#{registroBean.tiposDocumentos}" />
                                 </h:selectOneMenu>
@@ -83,7 +83,7 @@
                                 <p:message id="messageCel" for="TxtTelCel"/>
                             </div>
                         </div>
-                    </div> 
+                    </div>
 
                     <div class="ui-grid ui-grid-responsive">
                         <div class="ui-grid-row">
@@ -91,8 +91,8 @@
                                 <p:outputLabel for="TxtPais"
                                                value="País"
                                                style="font-weight: bold"/>
-                                <p:selectOneMenu id="TxtPais" 
-                                                 value="#{registroBean.pais}" 
+                                <p:selectOneMenu id="TxtPais"
+                                                 value="#{registroBean.pais}"
                                                  valueChangeListener="#{registroBean.cambioPais}"
                                                  label="País">
                                     <f:selectItems value="#{registroBean.paises}" />
@@ -102,7 +102,7 @@
                                 <p:outputLabel for="TxtCity"
                                                value="Ciudad"
                                                style="font-weight: bold"/>
-                                <p:selectOneMenu id="TxtCity" 
+                                <p:selectOneMenu id="TxtCity"
                                                  value="#{registroBean.ciudad}"
                                                  label="Ciudad">
                                     <f:selectItems value="#{registroBean.ciudades}" />
@@ -131,7 +131,7 @@
                                 <p:outputLabel for="TxtJob"
                                                value="Profesión"
                                                style="font-weight: bold"/>
-                                <p:selectOneMenu id="TxtJob" 
+                                <p:selectOneMenu id="TxtJob"
                                                  value="#{registroBean.usuario.profesion}"
                                                  label="Profesión">
                                     <f:selectItems value="#{registroBean.profesiones}" />
@@ -166,7 +166,7 @@
                                              value="#{registroBean.usuario.login}"
                                              required="true"
                                              label="Login">
-                                    <f:validateLength minimum="6"/>
+                                    <f:validateLength minimum="3"/>
                                 </p:inputText>
                                 <p:message id="messageLog" for="TxtLog"/>
                             </div>
@@ -197,7 +197,7 @@
             <h:commandButton value="Aceptar" action="#{registroBean.registrarUsuario}"/>
         </h:form>
         <h:panelGroup style="padding-left: 80px;background-color: white">
-                            <h:graphicImage url="./resources/img/pag/newUser.png" title="Nuevo usuario" width="256" height="256"/>
+            <h:graphicImage url="./resources/img/pag/newUser.png" title="Nuevo usuario" width="256" height="256"/>
         </h:panelGroup>
 
         <!-- Formulario para realizar un registro -->
@@ -225,7 +225,7 @@
                     </h:panelGroup>
                 </h:panelGroup>
 
-            </p:dialog>       
+            </p:dialog>
         </h:form>
 
     </ui:define>

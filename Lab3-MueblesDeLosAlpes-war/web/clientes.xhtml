@@ -15,14 +15,14 @@
         <h:form>
             <h:outputText id="linkHeader"
                           value="Administración de usuarios" style="color:white"/>
-        </h:form>    
+        </h:form>
         <h:panelGroup>
             <h:form>
                 <div align="right" style="padding-right: 10px">
                     <h:commandButton style="background: transparent" image="./resources/img/pag/atras.png" action="menu.jsf"/>
                 </div>
             </h:form>
-            
+
             <h:form>
                 <p:accordionPanel id="accordionPanelCliente">
                     <p:tab title="Registro de usuario">
@@ -33,11 +33,11 @@
                                     <p:inputText value="#{registroBean.usuario.documento}" required="true"
                                                  id="TxtID">
                                         <f:validateLength minimum="5" />
-                                    </p:inputText> 
+                                    </p:inputText>
                                     <p:message for="TxtID" display="text" />
                                 </div>
                                 <div class="ui-grid-col-6">
-                                    <h:selectOneMenu label="Tipo de Documento" 
+                                    <h:selectOneMenu label="Tipo de Documento"
                                                      value="#{registroBean.usuario.tipoDocumento}">
                                         <f:selectItems value="#{registroBean.tiposDocumentos}" />
                                     </h:selectOneMenu>
@@ -94,7 +94,7 @@
                                     <p:message id="messageCel" for="TxtTelCel"/>
                                 </div>
                             </div>
-                        </div> 
+                        </div>
 
                         <div class="ui-grid ui-grid-responsive">
                             <div class="ui-grid-row">
@@ -102,8 +102,8 @@
                                     <p:outputLabel for="TxtPais"
                                                    value="País"
                                                    style="font-weight: bold"/>
-                                    <p:selectOneMenu id="TxtPais" 
-                                                     value="#{registroBean.pais}" 
+                                    <p:selectOneMenu id="TxtPais"
+                                                     value="#{registroBean.pais}"
                                                      valueChangeListener="#{registroBean.cambioPais}"
                                                      label="País">
                                         <f:selectItems value="#{registroBean.paises}" />
@@ -113,7 +113,7 @@
                                     <p:outputLabel for="TxtCity"
                                                    value="Ciudad"
                                                    style="font-weight: bold"/>
-                                    <p:selectOneMenu id="TxtCity" 
+                                    <p:selectOneMenu id="TxtCity"
                                                      value="#{registroBean.ciudad}"
                                                      label="Ciudad">
                                         <f:selectItems value="#{registroBean.ciudades}" />
@@ -142,7 +142,7 @@
                                     <p:outputLabel for="TxtJob"
                                                    value="Profesión"
                                                    style="font-weight: bold"/>
-                                    <p:selectOneMenu id="TxtJob" 
+                                    <p:selectOneMenu id="TxtJob"
                                                      value="#{registroBean.usuario.profesion}"
                                                      label="Profesión">
                                         <f:selectItems value="#{registroBean.profesiones}" />
@@ -186,7 +186,7 @@
 
                         <div class="ui-grid ui-grid-responsive">
                             <div class="ui-grid-row">
-                                <div class="ui-grid-col-12">
+                                <div class="ui-grid-col-6">
                                     <p:outputLabel for="TxtPwd"
                                                    value="Contraseña"
                                                    style="font-weight: bold"/>
@@ -199,6 +199,16 @@
                                         <f:validateLength minimum="6" maximum="15" />
                                     </p:password>
                                     <p:message id="messagePwd" for="TxtPwd"/>
+                                </div>
+                                <div class="ui-grid-col-6">
+                                    <p:outputLabel for="TxtUser"
+                                                   value="Tipo Usuario"
+                                                   style="font-weight: bold"/>
+                                    <p:selectOneMenu id="TxtUser"
+                                                     value="#{registroBean.usuario.tipoUsuario}"
+                                                     label="Tipo Usuario">
+                                        <f:selectItems value="#{registroBean.tiposUsuario}" />
+                                    </p:selectOneMenu>
                                 </div>
                             </div>
                         </div>
@@ -215,34 +225,33 @@
             <h:panelGroup>
 
                 <!-- Se crea una tabla donde se presentan los muebles del sistema -->
-                <p:dataTable id="data" value="#{registroBean.clientes}" var="file"
-                    paginator="true" rows="5" scrollable="true" scrollHeight="200" scrollWidth="50%" frozenColumns="2"
-                    >
+                <p:dataTable id="data" value="#{registroBean.clientes}" var="file" scrollable="true"
+                             paginator="true" rows="10" scrollWidth="800">
                     <p:column>
                         <f:facet name="header">
                             Documento
                         </f:facet>
                         <h:outputText value="#{file.documento}"/>
                     </p:column>
-                    <p:column style="width:40px">
+                    <p:column>
                         <f:facet name="header">
                             Tipo
                         </f:facet>
                         <h:outputText value="#{file.tipoDocumento}"/>
                     </p:column>
-                    <p:column>
+                    <p:column style="width:200px">
                         <f:facet name="header">
                             Nombre
                         </f:facet>
                         <h:outputText value="#{file.nombreCompleto}"/>
                     </p:column>
-                    <p:column style="width:260px">
+                    <p:column>
                         <f:facet name="header">
                             Login
                         </f:facet>
                         <h:outputText value="#{file.login}"/>
                     </p:column>
-                    <p:column style="width:260px">
+                    <p:column style="width:100px">
                         <f:facet name="header">
                             Correo
                         </f:facet>
@@ -283,8 +292,8 @@
                             Privilegio
                         </f:facet>
                         <h:outputText value="#{file.tipoUsuario}"/>
-                    </p:column>                   
-                    <p:column style="width: 30px">
+                    </p:column>
+                    <p:column>
                         <f:facet name="header">
                             <h:outputText
                                 value="Eliminar"
@@ -301,7 +310,7 @@
                         </h:panelGroup>
                     </p:column>
                 </p:dataTable>
-            </h:panelGroup>    
+            </h:panelGroup>
         </h:form>
 
         <h:form>
@@ -310,23 +319,23 @@
             <p:dialog id="popupDiv" rendered="true" visible="#{registroBean.mostrarVentana}" modal="true" height="100">
 
                 <f:facet name="header">
-                        <h:outputText value="Mensajes de Usuario"/>
+                    <h:outputText value="Mensajes de Usuario"/>
                 </f:facet>
-                    <h:panelGroup>
-                        <h:panelGrid cellpadding="0" columns="2" style="background-position: center"
-                                     cellspacing="10" styleClass="popupModalBody">
-                            <p:graphicImage url="./resources/img/graphics/warning.png"/>
-                            <h:outputText
-                                value="#{registroBean.mensaje}"/>
-                        </h:panelGrid>
-                        <h:panelGroup style="vertical-align: middle;background: transparent">
-                            <div align="center">
-                                <h:commandButton id="closeModal"
-                                                 actionListener="#{registroBean.cerrarVentana}"
-                                                 value="Cerrar" style="z-index:2;"/>
-                            </div>
-                        </h:panelGroup>
+                <h:panelGroup>
+                    <h:panelGrid cellpadding="0" columns="2" style="background-position: center"
+                                 cellspacing="10" styleClass="popupModalBody">
+                        <p:graphicImage url="./resources/img/graphics/warning.png"/>
+                        <h:outputText
+                            value="#{registroBean.mensaje}"/>
+                    </h:panelGrid>
+                    <h:panelGroup style="vertical-align: middle;background: transparent">
+                        <div align="center">
+                            <h:commandButton id="closeModal"
+                                             actionListener="#{registroBean.cerrarVentana}"
+                                             value="Cerrar" style="z-index:2;"/>
+                        </div>
                     </h:panelGroup>
+                </h:panelGroup>
             </p:dialog>
 
         </h:form>

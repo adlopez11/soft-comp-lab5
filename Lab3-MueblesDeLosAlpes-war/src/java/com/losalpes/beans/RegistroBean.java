@@ -1,15 +1,13 @@
 /**
- * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- * $Id$ RegistroBean.java
- * Universidad de los Andes (Bogotá - Colombia)
- * Departamento de Ingeniería de Sistemas y Computación
- * Licenciado bajo el esquema Academic Free License version 3.0
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ $Id$
+ * RegistroBean.java Universidad de los Andes (Bogotá - Colombia) Departamento
+ * de Ingeniería de Sistemas y Computación Licenciado bajo el esquema Academic
+ * Free License version 3.0
  *
  * Ejercicio: Muebles los Alpes
- * 
+ *
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
-
 package com.losalpes.beans;
 
 import com.losalpes.entities.Ciudad;
@@ -33,17 +31,16 @@ import javax.faces.model.SelectItem;
 
 /**
  * Managed Bean encargado de la administración de los usuarios del sistema
- * 
+ *
  */
-public class RegistroBean implements Serializable
-{
+public class RegistroBean implements Serializable {
 
     //-----------------------------------------------------------
     // Atributos
     //-----------------------------------------------------------
-    
     /**
-     * Relación con la interfaz que provee los servicios de administración de usuarios
+     * Relación con la interfaz que provee los servicios de administración de
+     * usuarios
      */
     @EJB
     private IServicioRegistroMockLocal usuarioServices;
@@ -52,9 +49,10 @@ public class RegistroBean implements Serializable
      * Mensaje utilizado para mostrar información importante al usuario.
      */
     private String mensaje;
-    
+
     /**
-     * Referencia al objeto que se está mostrando al cliente. En este objeto se almacenan los datos del cliente.
+     * Referencia al objeto que se está mostrando al cliente. En este objeto se
+     * almacenan los datos del cliente.
      */
     private Usuario usuario;
 
@@ -90,14 +88,13 @@ public class RegistroBean implements Serializable
     /*
      * Constructor sin argumentos de la clase
      */
-    public RegistroBean() 
-    {
+    public RegistroBean() {
 
         usuarioServices = new ServicioRegistroMock();
 
         paises = new ArrayList<Pais>();
-        ciudades = new ArrayList<Ciudad>();   
-        mostrarVentana=false;
+        ciudades = new ArrayList<Ciudad>();
+        mostrarVentana = false;
         usuario = new Usuario();
 
         ArrayList<Ciudad> array = new ArrayList<Ciudad>();
@@ -114,7 +111,7 @@ public class RegistroBean implements Serializable
         array2.add(new Ciudad("Chicago"));
         array2.add(new Ciudad("Miami"));
         array2.add(new Ciudad("New York"));
-        array2.add(new Ciudad("Washington D.C"));      
+        array2.add(new Ciudad("Washington D.C"));
 
         paises.add(new Pais("Estados Unidos", array2));
 
@@ -133,31 +130,30 @@ public class RegistroBean implements Serializable
     //-----------------------------------------------------------
     // Getter y setters
     //-----------------------------------------------------------
-
     /**
      * Devuelve el usuario actual.
+     *
      * @return usuario Usuario actual
      */
-    public Usuario getUsuario()
-    {
+    public Usuario getUsuario() {
         return usuario;
     }
 
     /**
      * Modifica el usuario actual
+     *
      * @param usuario Nuevo usuario
      */
-    public void setUsuario(Usuario usuario)
-    {
+    public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
     }
 
     /**
      * Método que devuelve los tipos de documentos a ser visualizados
+     *
      * @return sitems Tipos de documentos
      */
-    public SelectItem[] getTiposDocumentos()
-    {
+    public SelectItem[] getTiposDocumentos() {
         TipoDocumento[] tipos = TipoDocumento.values();
         SelectItem[] sitems = new SelectItem[tipos.length];
         for (int i = 0; i < sitems.length; i++) {
@@ -168,10 +164,10 @@ public class RegistroBean implements Serializable
 
     /**
      * Método que devuelve las posibles profesiones de un cliente
+     *
      * @return sitems Profesiones posibles
      */
-    public SelectItem[] getProfesiones()
-    {
+    public SelectItem[] getProfesiones() {
         Profesion[] tipos = Profesion.values();
         SelectItem[] sitems = new SelectItem[tipos.length];
         for (int i = 0; i < sitems.length; i++) {
@@ -182,10 +178,10 @@ public class RegistroBean implements Serializable
 
     /**
      * Método que devuelve los países del sistema
+     *
      * @return sitems Países del sistema
      */
-    public SelectItem[] getPaises()
-    {
+    public SelectItem[] getPaises() {
         SelectItem[] sitems = new SelectItem[paises.size()];
         for (int i = 0; i < sitems.length; i++) {
             sitems[i] = new SelectItem(paises.get(i).getNombre());
@@ -194,11 +190,12 @@ public class RegistroBean implements Serializable
     }
 
     /**
-     * Método que retorna los tipos de documentos a ser visualizados para que el cliente escoja.
+     * Método que retorna los tipos de documentos a ser visualizados para que el
+     * cliente escoja.
+     *
      * @return
      */
-    public SelectItem[] getCiudades()
-    {
+    public SelectItem[] getCiudades() {
 
         SelectItem[] sitems = new SelectItem[ciudades.size()];
         for (int i = 0; i < sitems.length; i++) {
@@ -209,11 +206,11 @@ public class RegistroBean implements Serializable
     }
 
     /**
-     * Método que retorna los tipos de usuario a ser visualizados 
+     * Método que retorna los tipos de usuario a ser visualizados
+     *
      * @return
      */
-    public SelectItem[] getTiposUsuario()
-    {
+    public SelectItem[] getTiposUsuario() {
 
         TipoUsuario[] tipos = TipoUsuario.values();
         SelectItem[] sitems = new SelectItem[tipos.length];
@@ -225,24 +222,22 @@ public class RegistroBean implements Serializable
 
     /**
      * Devuelve el nombre del país que se encuentra seleccionado
+     *
      * @return
      */
-    public String getPais()
-    {
+    public String getPais() {
         return pais.getNombre();
     }
 
     /**
      * Modifica, dado el nombre, el objeto país de la clase
+     *
      * @param nombre Nombre del país a seleccionar
      */
-    public void setPais(String nombre)
-    {
+    public void setPais(String nombre) {
 
-        for (int i = 0; i < paises.size(); i++)
-        {
-            if (paises.get(i).getNombre().equals(nombre))
-            {
+        for (int i = 0; i < paises.size(); i++) {
+            if (paises.get(i).getNombre().equals(nombre)) {
                 pais = paises.get(i);
                 return;
             }
@@ -251,164 +246,156 @@ public class RegistroBean implements Serializable
 
     /**
      * Devuelve el mensaje que contiene información sobre algún tipo de estado
+     *
      * @return mensaje Mensaje a devolver
      */
-    public String getMensaje()
-    {
+    public String getMensaje() {
         return mensaje;
     }
 
     /**
      * Devuelve el nombre de la ciudad seleccionada actualmente
+     *
      * @return ciudad Nombre de la ciudad
      */
-    public String getCiudad()
-    {
+    public String getCiudad() {
         return ciudad;
     }
 
     /**
-     * Modifica el nombre de la ciudad seleccionada actualmente y actualiza el objeto
+     * Modifica el nombre de la ciudad seleccionada actualmente y actualiza el
+     * objeto
+     *
      * @param nombre Nuevo nommbre de ciudad
      */
-    public void setCiudad(String nombre)
-    {
+    public void setCiudad(String nombre) {
         ciudad = nombre;
-        usuario.setCiudad(new Ciudad(nombre));
+        usuario.setCiudad(new Ciudad(nombre, pais));
     }
 
     /**
      * Devuelve el estado para mostrar o no la ventana popUp
+     *
      * @return mostrarVentana Estado para mostrar o no ventana
      */
-    public boolean isMostrarVentana()
-    {
+    public boolean isMostrarVentana() {
         return mostrarVentana;
     }
 
     /**
      * Modifica el estado para mostrar la ventana popUp
+     *
      * @param mostrarVentana Nuevo estado
      */
-    public void setMostrarVentana(boolean mostrarVentana)
-    {
+    public void setMostrarVentana(boolean mostrarVentana) {
         this.mostrarVentana = mostrarVentana;
     }
 
     //-----------------------------------------------------------
     // Métodos
     //-----------------------------------------------------------
-
     /**
-     * Value change listener que dado un cambio en los países actualiza las ciudades
+     * Value change listener que dado un cambio en los países actualiza las
+     * ciudades
+     *
      * @param event Evento de cambio
      */
-    public void cambioPais(ValueChangeEvent event)
-    {
+    public void cambioPais(ValueChangeEvent event) {
         setPais(event.getNewValue().toString());
         ciudades = pais.getCiudades();
     }
-    
+
     /**
      * Crea un usuario con los datos proporcionados por el cliente.
+     *
      * @return login Redirecciona a la página principal
      */
-    public String registrarUsuario()
-    {
-        try
-        {
-            if(usuario.getTipoUsuario() == null)
-            {
+    public String registrarUsuario() {
+        try {
+            if (usuario.getTipoUsuario() == null) {
                 usuario.setTipoUsuario(TipoUsuario.Cliente);
             }
-            usuarioServices.registrar(usuario);          
-            mensaje = "Su cuenta ha sido creada exitosamente.";
+            usuarioServices.registrar(usuario);
+            mensaje = "Su cuenta ha sido creada exitosamente asi como su tarjeta MueblesDeLosAlpes.";
             mostrarVentana = true;
-            destroyBean();            
+            destroyBean();
             return "login";
-        } 
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             mensaje = "Ocurrió un error al momento de crear su cuenta.";
-            
+
             mostrarVentana = true;
             return "registro";
         }
     }
 
-        /**
+    /**
      * Crea un usuario con los datos proporcionados por el cliente.
+     *
      * @return login Redirecciona a la página principal
      */
-    public void registrarAdministrador()
-    {
-        try
-        {
+    public void registrarAdministrador() {
+        try {
 
             usuarioServices.registrar(usuario);
-            mensaje = "Su cuenta ha sido creada exitósamente.";
+            if (usuario.getTipoUsuario().equals(TipoUsuario.Cliente)) {
+                mensaje = "Su cuenta ha sido creada exitósamente asi como su tarjeta MueblesDeLosAlpes.";
+            } else {
+                mensaje = "Su cuenta ha sido creada exitósamente.";
+            }
+
             mostrarVentana = true;
             limpiar();
-           
-        }
-        catch (Exception e)
-        {
+
+        } catch (Exception e) {
             mensaje = "Ocurrió un error al momento de crear su cuenta.";
 
             mostrarVentana = true;
-            
+
         }
     }
 
-
-    public List<Usuario> getClientes()
-    {
+    public List<Usuario> getClientes() {
         return usuarioServices.darClientes();
     }
 
-    public void eliminar(ActionEvent evento) throws OperacionInvalidaException
-    {
-      
-        try
-        {
+    public void eliminar(ActionEvent evento) throws OperacionInvalidaException {
+
+        try {
             FacesContext context = FacesContext.getCurrentInstance();
             Map map = context.getExternalContext().getRequestParameterMap();
             String clientId = (String) map.get("clientId");
 
             usuarioServices.eliminarCliente(clientId);
 
-        }
-        catch(OperacionInvalidaException e)
-        {
+        } catch (OperacionInvalidaException e) {
             throw new OperacionInvalidaException(e.getMessage());
-            
+
         }
-    
+
     }
+
     /**
      * Método que remueve este bean del contexto.
      */
-    public void destroyBean()
-    {
+    public void destroyBean() {
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("registroBean");
     }
 
     /**
      * Cierra la ventana popUp
+     *
      * @return login Devuelve a la ventana de inicio
      */
-    public String cerrarVentana()
-    {
-        mostrarVentana=false;
+    public String cerrarVentana() {
+        mostrarVentana = false;
         return "login";
     }
 
     /**
      * Elimina la información del usuario
      */
-    public void limpiar()
-    {
-        usuario=new Usuario();
+    public void limpiar() {
+        usuario = new Usuario();
     }
 
 }

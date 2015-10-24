@@ -1,9 +1,8 @@
 /**
- * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- * $Id$ Pais.java
- * Universidad de los Andes (Bogotá - Colombia)
- * Departamento de Ingeniería de Sistemas y Computación
- * Licenciado bajo el esquema Academic Free License version 3.0
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ $Id$
+ * Pais.java Universidad de los Andes (Bogotá - Colombia) Departamento de
+ * Ingeniería de Sistemas y Computación Licenciado bajo el esquema Academic Free
+ * License version 3.0
  *
  * Ejercicio: Muebles de los Alpes
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -12,6 +11,7 @@ package com.losalpes.entities;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -20,13 +20,11 @@ import javax.persistence.OneToMany;
  * Clase que representa un país en el sistema
  */
 @Entity
-public class Pais implements Serializable
-{
+public class Pais implements Serializable {
 
     //-----------------------------------------------------------
     // Atributos
     //-----------------------------------------------------------
-    
     /**
      * Nombre del país
      */
@@ -35,28 +33,27 @@ public class Pais implements Serializable
     /**
      * Ciudades que tiene el país
      */
-    @OneToMany
+
+    @OneToMany(mappedBy = "pais")
     private List<Ciudad> ciudades;
 
     //-----------------------------------------------------------
     // Constructores
     //-----------------------------------------------------------
-
     /**
      * Constructor de la clase (sin argumentos)
      */
-    public Pais()
-    {
+    public Pais() {
 
     }
 
     /**
      * Constructor de la clase (con argumentos)
+     *
      * @param nombre Nombre del país
      * @param ciudades Lista con las ciudades del país
      */
-    public Pais(String nombre, List<Ciudad> ciudades)
-    {
+    public Pais(String nombre, List<Ciudad> ciudades) {
         this.nombre = nombre;
         this.ciudades = ciudades;
     }
@@ -64,41 +61,67 @@ public class Pais implements Serializable
     //-----------------------------------------------------------
     // Getters y setters
     //-----------------------------------------------------------
-
     /**
      * Devuele el nombre del país
+     *
      * @return nombre Nombre del país
      */
-    public String getNombre()
-    {
+    public String getNombre() {
         return nombre;
     }
 
     /**
      * Modifica el nombre del país
+     *
      * @param nombre Nuevo nombre
      */
-    public void setNombre(String nombre)
-    {
+    public void setNombre(String nombre) {
         this.nombre = nombre;
     }
 
     /**
      * Devuelve todas las ciudades del país
+     *
      * @return ciudades Ciudades del país
      */
-    public List<Ciudad> getCiudades()
-    {
+    public List<Ciudad> getCiudades() {
         return ciudades;
     }
 
     /**
      * Modifica las ciudades del país
+     *
      * @param ciudades Nuevas ciudades
      */
-    public void setCiudades(List<Ciudad> ciudades)
-    {
+    public void setCiudades(List<Ciudad> ciudades) {
         this.ciudades = ciudades;
+    }
+
+    @Override
+    public String toString() {
+        return "Pais{" + "nombre=" + nombre + '}';
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 11 * hash + Objects.hashCode(this.nombre);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Pais other = (Pais) obj;
+        if (!Objects.equals(this.nombre, other.nombre)) {
+            return false;
+        }
+        return true;
     }
 
 }

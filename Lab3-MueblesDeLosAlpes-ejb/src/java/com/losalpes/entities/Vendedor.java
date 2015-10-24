@@ -19,6 +19,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 
 /**
  * Clase que modela un vendedor dentro del sistema.
@@ -33,7 +34,8 @@ public class Vendedor implements Serializable {
      * Número de identificación del vendedor
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @SequenceGenerator(name = "seq_vendedor", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_vendedor")
     private long id;
 
     /**
@@ -51,7 +53,7 @@ public class Vendedor implements Serializable {
     /**
      * Lista de ítems de experiencia del vendedor.
      */
-    @OneToMany(cascade=CascadeType.PERSIST)
+    @OneToMany(mappedBy = "vendedor", cascade = CascadeType.PERSIST)
     private List<ExperienciaVendedor> experiencia;
 
     /**
