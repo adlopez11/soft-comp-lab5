@@ -13,6 +13,7 @@ package com.losalpes.beans;
 import com.losalpes.entities.Mueble;
 import com.losalpes.entities.RegistroVenta;
 import com.losalpes.entities.Usuario;
+import com.losalpes.excepciones.OperacionInvalidaException;
 import com.losalpes.servicios.IServicioCarritoMockLocal;
 import com.losalpes.servicios.IServicioCatalogoMockLocal;
 import java.io.Serializable;
@@ -89,16 +90,19 @@ public class CarritoBean implements Serializable {
      * Agrega un item al carrito de compras
      *
      * @param ddEvent Evento que contiene el valor del mueble
+     * @throws com.losalpes.excepciones.OperacionInvalidaException
      */
-    public void agregarItemCarrito(DragDropEvent ddEvent) {
+    public void agregarItemCarrito(DragDropEvent ddEvent) throws OperacionInvalidaException {
         Mueble mueble = ((Mueble) ddEvent.getData());
         carrito.agregarItem(mueble);
     }
 
     /**
      * Realiza una compra basado en los items del carrito
+     *
+     * @throws com.losalpes.excepciones.OperacionInvalidaException
      */
-    public void comprar() {
+    public void comprar() throws OperacionInvalidaException {
         if (FacesContext.getCurrentInstance().getExternalContext().getSessionMap().containsKey("loginBean")) {
             LoginBean sessionSecurity = (LoginBean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("loginBean");
             Usuario user = sessionSecurity.getSesion();
