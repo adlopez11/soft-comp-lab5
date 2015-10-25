@@ -18,16 +18,14 @@
             <h:outputText id="linkHeader"
                           value="Administración de vendedores" style="color:white"/>
         </h:form>
-
-
-        <h:panelGroup>
-            <h:form>
-                <div align="right" style="padding-right: 10px">
-                    <h:commandButton style="background: transparent" image="./resources/img/pag/atras.png" action="menu.jsf"/>
-                </div>
-            </h:form>
-            <h:form>
-                <p:accordionPanel>
+        <h:form>
+            <div align="right" style="padding-right: 10px">
+                <h:commandButton style="background: transparent" image="./resources/img/pag/atras.png" action="menu.jsf"/>
+            </div>
+        </h:form>
+        <h:form>
+            <h:panelGroup>
+                <p:accordionPanel id="accor_exp">
                     <p:tab title="Experiencia vendedor">
                         <div class="ui-grid ui-grid-responsive">
                             <div class="ui-grid-row">
@@ -95,12 +93,12 @@
 
                     </p:tab>
                 </p:accordionPanel>
-                <h:commandButton value="Agregar" action="#{vendedorBean.agregarItemExperiencia}"/>
-            </h:form>
-        </h:panelGroup>
+                <p:commandButton value="Agregar" actionListener="#{vendedorBean.agregarItemExperiencia}" update=":#{p:component('form_pnl')} :#{p:component('accor_exp')}" />
+            </h:panelGroup>
+        </h:form>
+        <h:form id="form_pnl">
+            <h:panelGroup>
 
-        <h:panelGroup>
-            <h:form>
                 <p:accordionPanel>
                     <p:tab title="Datos vendedor">
                         <div class="ui-grid ui-grid-responsive">
@@ -125,7 +123,7 @@
                                                    style="font-weight: bold"/>
                                     <p:inputText id="TxtApellido"
                                                  size="20"
-                                                 maxlength="7"
+                                                 maxlength="15"
                                                  value="#{vendedorBean.vendedor.apellidos}"
                                                  required="true"
                                                  label="Apellidos">
@@ -186,50 +184,46 @@
                                 </div>
 
                                 <div class="ui-grid-col-6">
-                                    <h:outputLabel for="TxtImagen" value="Imagen" />
-                                    <h:selectOneMenu id="TxtImagen" value="#{vendedorBean.vendedor.foto}" label="Foto">
+                                    <h:outputLabel for="TxtImagen" value="Imagen *" />
+                                    <p:selectOneMenu id="TxtImagen" value="#{vendedorBean.vendedor.foto}" label="Foto" style="width: 125px">
                                         <f:selectItem itemLabel="Imagen 1" itemValue="vendedor1" />
                                         <f:selectItem itemLabel="Imagen 2" itemValue="vendedor2" />
-                                    </h:selectOneMenu>
+                                    </p:selectOneMenu>
                                 </div>
                             </div>
                         </div>
                         <br/>
                         <br/>
-                        <p:dataList value="#{vendedorBean.vendedor.experiencia}"  var="exp" paginator="true" rows="5">
+                        <p:dataTable value="#{vendedorBean.vendedor.experiencia}" var="exp" paginator="true" rows="10" id="exp_tab">
                             <f:facet name="header" >
                                 Experiencia
                             </f:facet>
-
-                            <h:panelGrid columns="2" style="width:100%" columnClasses="logo,detail">
-                                <p:outputPanel>
-                                    <h:panelGrid columns="2" cellpadding="5">
-                                        <h:outputText value="Identificación:" />
-                                        <h:outputText value="#{employee.identificacion}" style="font-weight: bold"/>
-
-                                        <h:outputText value="Perfil:" />
-                                        <h:outputText value="#{employee.perfil}" style="font-weight: bold"/>
-
-                                        <h:outputText value="Salario: $ " />
-                                        <h:outputText value="#{employee.salario}" style="font-weight: bold"/>
-                                    </h:panelGrid>
-                                </p:outputPanel>
-                            </h:panelGrid>
-                            <center>
-                                <h:commandButton id="DDRtn" action="#{vendedorBean.eliminarVendedor}"
-                                                 value="Eliminar"  >
-                                    <f:param name="vendedorId" value="#{employee.identificacion}"/>
-
-                                </h:commandButton>
-                            </center>
-                        </p:dataList>
+                            <p:column headerText="Empresa">
+                                <h:outputText value="#{exp.nombreEmpesa}" style="font-weight: bold"/>
+                            </p:column>
+                            <p:column headerText="Cargo">
+                                <h:outputText value="#{exp.cargo}" style="font-weight: bold"/>
+                            </p:column>
+                            <p:column headerText="Año">
+                                <h:outputText value="#{exp.ano}" style="font-weight: bold"/>
+                            </p:column>
+                            <p:column headerText="Descripcion">
+                                <h:outputText value="#{exp.descripcion}" style="font-weight: bold"/>
+                            </p:column>
+                            <p:column headerText="Eliminar">
+                                <p:commandButton id="delete_exp" action="#{vendedorBean.eliminarExsperiencia(exp)}"
+                                                 value="Eliminar"  disabled="#{exp.id != 0}" update="exp_tab" />
+                            </p:column>
+                        </p:dataTable>
                     </p:tab>
                 </p:accordionPanel>
+                <br/>
+                <br/>
                 <h:commandButton value="Agregar vendedor" action="#{vendedorBean.agregarVendedor}"/>
-            </h:form>
-        </h:panelGroup>
+            </h:panelGroup>
+            <br/>
+            <br/>
 
-        <h:form>
             <h:panelGroup>
                 <!-- Se crea una tabla donde se presentan los vendedores del sistema -->
                 <p:dataTable value="#{vendedorBean.vendedores}"  var="employee" paginator="true" rows="10">
@@ -251,12 +245,10 @@
                         <h:outputText value="#{employee.salario}" style="font-weight: bold"/>
                     </p:column>
                     <p:column headerText="Eliminar">
-                        <h:commandButton id="DDRtn" action="#{vendedorBean.eliminarVendedor}"
-                                         value="Eliminar"  >
-                            <f:param name="vendedorId" value="#{employee.identificacion}"/>
-                        </h:commandButton>
+                        <h:commandButton id="DDRtn" action="#{vendedorBean.eliminarVendedor(employee)}"
+                                         value="Eliminar"  />
                     </p:column>
-                </p:dataTable
+                </p:dataTable>
             </h:panelGroup>
         </h:form>
     </ui:define>

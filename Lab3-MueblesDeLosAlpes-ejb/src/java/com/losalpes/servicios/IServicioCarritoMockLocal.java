@@ -13,7 +13,7 @@ package com.losalpes.servicios;
 import com.losalpes.entities.Mueble;
 import com.losalpes.entities.RegistroVenta;
 import com.losalpes.entities.Usuario;
-import java.util.ArrayList;
+import com.losalpes.excepciones.OperacionInvalidaException;
 import java.util.List;
 
 /**
@@ -27,14 +27,14 @@ public interface IServicioCarritoMockLocal {
      *
      * @return inventario Lista con los muebles que se encuentran en el carrito
      */
-    public ArrayList<RegistroVenta> getInventario();
+    public List<RegistroVenta> getInventario();
 
     /**
      * Modifica el inventario del carrito
      *
      * @param inventario Nueva lista de muebles
      */
-    public void setInventario(ArrayList<RegistroVenta> inventario);
+    public void setInventario(List<RegistroVenta> inventario);
 
     /**
      * Devuelve el precio total del inventario
@@ -54,23 +54,17 @@ public interface IServicioCarritoMockLocal {
      * Realiza la compra de los items que se encuentran en el carrito
      *
      * @param usuario Usuario que realiza la compra
+     * @throws com.losalpes.excepciones.OperacionInvalidaException
      */
-    public void comprar(Usuario usuario);
-
-    /**
-     * Realiza la compra de los items que se envian como parametro
-     *
-     * @param ventas
-     * @param usuario Usuario que realiza la compra
-     */
-    public void comprar(List<RegistroVenta> ventas, Usuario usuario);
+    public void comprar(Usuario usuario) throws OperacionInvalidaException;
 
     /**
      * Agrega un nuevo mueble al carro de compras
      *
      * @param mueble Mueble que se agrega al carrito
+     * @throws com.losalpes.excepciones.OperacionInvalidaException
      */
-    public void agregarItem(Mueble mueble);
+    public void agregarItem(Mueble mueble) throws OperacionInvalidaException;
 
     /**
      * Remueve un mueble del carrito de compra

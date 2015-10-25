@@ -5,15 +5,18 @@
  */
 package com.losalpes.servicios;
 
+import com.losalpes.entities.RegistroVenta;
 import com.losalpes.entities.TarjetaCreditoAlpes;
 import com.losalpes.entities.Usuario;
 import com.losalpes.entities.Vendedor;
+import com.losalpes.excepciones.CupoInsuficienteException;
 import com.losalpes.excepciones.OperacionInvalidaException;
 import com.losalpes.excepciones.VendedorException;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.SessionContext;
@@ -41,6 +44,9 @@ public class PersistenciaCMT implements IPersistenciaCMTLocal, IPersistenciaCMTR
 
     @EJB
     private IServicioRegistroMockLocal servicioUsuario;
+
+    @EJB
+    private IServicioCarritoMockLocal servicioCarrito;
 
     /**
      * Metodo para insertar un vendedor en la base de datos Derby.
@@ -221,6 +227,84 @@ public class PersistenciaCMT implements IPersistenciaCMTLocal, IPersistenciaCMTR
         } catch (SQLException e) {
             //Ejecucion del rollback
             sctx.setRollbackOnly();
+            e.printStackTrace(System.out);
+            throw e;
+        } finally {
+            //Libera los recursos
+            cerrarStatement(pstmtSelect);
+            cerrarStatement(pstmtInsert);
+        }
+    }
+
+    /**
+     * Metodo para registrar la compra del carrito de compras descontando en la
+     * base de datos derby la base de datos
+     *
+     * @param listaVentas
+     * @param comprador
+     * @throws com.losalpes.excepciones.CupoInsuficienteException
+     * @throws com.losalpes.excepciones.OperacionInvalidaException
+     */
+    public void comprar(List<RegistroVenta> listaVentas, Usuario comprador) throws CupoInsuficienteException, OperacionInvalidaException {
+        try {
+
+            servicioCarrito.setInventario(listaVentas);
+
+            long valorVenta = (long) servicioCarrito.getPrecioTotalInventario();
+
+            servicioCarrito.comprar(comprador);
+
+            actualizarSaldoTarjeta(comprador.getLogin(), valorVenta);
+
+        } catch (OperacionInvalidaException | SQLException ex) {
+            //Ejecucion del rollback
+            sctx.setRollbackOnly();
+            ex.printStackTrace(System.out);
+            throw new OperacionInvalidaException(ex.getMessage());
+
+        } catch (CupoInsuficienteException ex) {
+            //Ejecucion del rollback se indica mediante la exepcion
+            ex.printStackTrace(System.out);
+            throw ex;
+        }
+    }
+
+    private void actualizarSaldoTarjeta(final String idTarjeta, final long valorVenta) throws CupoInsuficienteException, OperacionInvalidaException, SQLException {
+        PreparedStatement pstmtSelect = null;
+        PreparedStatement pstmtInsert = null;
+        String querySelect = "SELECT saldo FROM TarjetaCreditoAlpes WHERE id = ?";
+        String queryInsert = "UPDATE TarjetaCreditoAlpes set saldo = ? WHERE id = ?";
+
+        try {
+
+            pstmtSelect = dataSource.getConnection().prepareStatement(querySelect);
+            pstmtSelect.setString(1, idTarjeta);
+            ResultSet rs = pstmtSelect.executeQuery();
+            Long saldo;
+            if (rs.next()) {
+                saldo = rs.getLong("saldo");
+                if (saldo < valorVenta) {
+                    sctx.setRollbackOnly();
+                    cerrarStatement(pstmtSelect);
+                    throw new CupoInsuficienteException("Cupo insuficiente en la tarjeta");
+                }
+            } else {
+                sctx.setRollbackOnly();
+                cerrarStatement(pstmtSelect);
+                throw new OperacionInvalidaException("No existe la tarjeta con identificacion " + idTarjeta);
+            }
+            pstmtInsert = dataSource.getConnection().prepareStatement(queryInsert);
+            pstmtInsert.setLong(1, saldo - valorVenta);
+            pstmtInsert.setString(2, idTarjeta);
+            pstmtInsert.executeUpdate();
+
+        } catch (SQLException | OperacionInvalidaException e) {
+            //Ejecucion del rollback
+            sctx.setRollbackOnly();
+            e.printStackTrace(System.out);
+            throw e;
+        } catch (CupoInsuficienteException e) {
+            //Ejecucion del rollback se indica mediante la exepcion
             e.printStackTrace(System.out);
             throw e;
         } finally {

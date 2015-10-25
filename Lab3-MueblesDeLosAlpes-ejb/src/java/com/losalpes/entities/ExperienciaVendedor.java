@@ -10,6 +10,7 @@
 package com.losalpes.entities;
 
 import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -192,6 +193,44 @@ public class ExperienciaVendedor implements Serializable {
 
     public void setVendedor(Vendedor vendedor) {
         this.vendedor = vendedor;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 59 * hash + (int) (this.id ^ (this.id >>> 32));
+        hash = 59 * hash + Objects.hashCode(this.nombreEmpesa);
+        hash = 59 * hash + Objects.hashCode(this.cargo);
+        hash = 59 * hash + Objects.hashCode(this.descripcion);
+        hash = 59 * hash + this.ano;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ExperienciaVendedor other = (ExperienciaVendedor) obj;
+        if (this.id != other.id) {
+            return false;
+        }
+        if (!Objects.equals(this.nombreEmpesa, other.nombreEmpesa)) {
+            return false;
+        }
+        if (!Objects.equals(this.cargo, other.cargo)) {
+            return false;
+        }
+        if (!Objects.equals(this.descripcion, other.descripcion)) {
+            return false;
+        }
+        if (this.ano != other.ano) {
+            return false;
+        }
+        return true;
     }
 
 }

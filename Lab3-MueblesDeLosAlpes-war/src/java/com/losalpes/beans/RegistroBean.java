@@ -20,7 +20,6 @@ import com.losalpes.entities.Usuario;
 import com.losalpes.excepciones.OperacionInvalidaException;
 import com.losalpes.servicios.IPersistenciaCMTLocal;
 import com.losalpes.servicios.IServicioRegistroMockLocal;
-import com.losalpes.servicios.ServicioRegistroMock;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -103,8 +102,6 @@ public class RegistroBean implements Serializable {
      * Constructor sin argumentos de la clase
      */
     public RegistroBean() {
-
-        usuarioServices = new ServicioRegistroMock();
 
         paises = new ArrayList<Pais>();
         ciudades = new ArrayList<Ciudad>();

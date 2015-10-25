@@ -39,7 +39,7 @@ public class ServicioCarritoMock implements IServicioCarritoMockRemote, IServici
     /**
      * Lista con los muebles del carrito
      */
-    private ArrayList<RegistroVenta> inventario;
+    private List<RegistroVenta> inventario;
 
     /**
      * Precio total de todo el inventario
@@ -70,7 +70,7 @@ public class ServicioCarritoMock implements IServicioCarritoMockRemote, IServici
      * @return inventario Lista con los muebles que se encuentran en el carrito
      */
     @Override
-    public ArrayList<RegistroVenta> getInventario() {
+    public List<RegistroVenta> getInventario() {
         return inventario;
     }
 
@@ -80,7 +80,7 @@ public class ServicioCarritoMock implements IServicioCarritoMockRemote, IServici
      * @param inventario Nueva lista de muebles
      */
     @Override
-    public void setInventario(ArrayList<RegistroVenta> inventario) {
+    public void setInventario(List<RegistroVenta> inventario) {
         this.inventario = inventario;
     }
 
@@ -111,22 +111,12 @@ public class ServicioCarritoMock implements IServicioCarritoMockRemote, IServici
      * Realiza la compra de los items que se encuentran en el carrito
      *
      * @param usuario Usuario que realiza la compra
+     * @throws com.losalpes.excepciones.OperacionInvalidaException
      */
     @Override
-    public void comprar(Usuario usuario) {
-        comprar(inventario, usuario);
-    }
+    public void comprar(Usuario usuario) throws OperacionInvalidaException {
 
-    /**
-     * Realiza la compra de los items que se envian como parametro
-     *
-     * @param ventas
-     * @param usuario Usuario que realiza la compra
-     */
-    @Override
-    public void comprar(List<RegistroVenta> ventas, Usuario usuario) {
-
-        for (RegistroVenta item : ventas) {
+        for (RegistroVenta item : inventario) {
 
             Mueble muebleEditar = (Mueble) persistencia.findById(Mueble.class, item.getProducto().getReferencia());
             muebleEditar.setCantidad(muebleEditar.getCantidad() - item.getCantidad());
@@ -134,11 +124,7 @@ public class ServicioCarritoMock implements IServicioCarritoMockRemote, IServici
             item.setCiudad(usuario.getCiudad().getNombre());
             item.setFechaVenta(new Date());
             item.setProducto(muebleEditar);
-            try {
-                persistencia.create(item);
-            } catch (OperacionInvalidaException ex) {
-                ex.printStackTrace(System.out);
-            }
+            persistencia.create(item);
 
             usuario.agregarRegistro(item);
 

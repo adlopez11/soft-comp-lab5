@@ -13,12 +13,12 @@ package com.losalpes.beans;
 import com.losalpes.entities.ExperienciaVendedor;
 import com.losalpes.entities.Vendedor;
 import com.losalpes.excepciones.OperacionInvalidaException;
+import com.losalpes.excepciones.VendedorException;
+import com.losalpes.servicios.IPersistenciaCMTLocal;
 import com.losalpes.servicios.IServicioVendedoresMockLocal;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 import javax.ejb.EJB;
-import javax.faces.context.FacesContext;
 
 /**
  * Managed Bean encargado de la administración de vendedores en el sistema
@@ -34,6 +34,13 @@ public class VendedorBean implements Serializable {
      */
     @EJB
     private IServicioVendedoresMockLocal servicio;
+
+    /**
+     * Relación con la interfaz que provee los servicios necesarios para
+     * administrar ambas bases de datos
+     */
+    @EJB
+    private IPersistenciaCMTLocal persistenciaCMTService;
 
     /**
      * Representa un nuevo vendedor a ingresar
@@ -66,15 +73,6 @@ public class VendedorBean implements Serializable {
      */
     public Vendedor getVendedor() {
         return vendedor;
-    }
-
-    /**
-     * Modifica al vendedor actual
-     *
-     * @param vendedor Nuevo vendedor
-     */
-    public void setVendedor(Vendedor vendedor) {
-        this.vendedor = vendedor;
     }
 
     /**
@@ -114,27 +112,34 @@ public class VendedorBean implements Serializable {
      */
     public void agregarVendedor() throws OperacionInvalidaException {
         try {
-            servicio.agregarVendedor(vendedor);
+            persistenciaCMTService.insertLocalRemoteDatabase(vendedor);
             vendedor = new Vendedor();
             experiencia = new ExperienciaVendedor();
-        } catch (OperacionInvalidaException ex) {
+        } catch (VendedorException ex) {
             throw new OperacionInvalidaException(ex.getMessage());
         }
     }
 
     /**
-     * Elimina un vendedor del sistema
+     * Elimina una experiecia del vendedor si no se ha persistido
      *
+     * @param experiencia
      * @throws com.losalpes.excepciones.OperacionInvalidaException
      */
-    public void eliminarVendedor() throws OperacionInvalidaException {
-        FacesContext context = FacesContext.getCurrentInstance();
-        Map map = context.getExternalContext().getRequestParameterMap();
+    public void eliminarExsperiencia(ExperienciaVendedor experiencia) throws OperacionInvalidaException {
+        vendedor.getExperiencia().remove(experiencia);
+    }
 
-        long vendedorId = Long.parseLong((String) map.get("vendedorId"));
+    /**
+     * Elimina un vendedor del sistema
+     *
+     * @param vendedor
+     * @throws com.losalpes.excepciones.OperacionInvalidaException
+     */
+    public void eliminarVendedor(Vendedor vendedor) throws OperacionInvalidaException {
         try {
-            servicio.eliminarVendedor(vendedorId);
-        } catch (OperacionInvalidaException ex) {
+            persistenciaCMTService.deleteLocalRemoteDatabase(vendedor);
+        } catch (VendedorException ex) {
             throw new OperacionInvalidaException(ex.getMessage());
         }
     }
@@ -143,6 +148,7 @@ public class VendedorBean implements Serializable {
      * Agrega un item de experiencia a lista de experiencia del vendedor
      */
     public void agregarItemExperiencia() {
+        experiencia.setVendedor(vendedor);
         vendedor.setItemExperiencia(experiencia);
         experiencia = new ExperienciaVendedor();
     }
