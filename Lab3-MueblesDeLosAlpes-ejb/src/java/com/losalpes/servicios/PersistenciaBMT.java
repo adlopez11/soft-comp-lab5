@@ -5,10 +5,13 @@
  */
 package com.losalpes.servicios;
 
+import com.losalpes.entities.TarjetaCreditoAlpes;
+import com.losalpes.entities.Usuario;
 import com.losalpes.entities.Vendedor;
 import com.losalpes.excepciones.DataBaseException;
 import com.losalpes.excepciones.OperacionInvalidaException;
 import com.losalpes.excepciones.VendedorException;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -42,9 +45,13 @@ public class PersistenciaBMT implements IPersistenciaBMTLocal, IPersistenciaBMTR
     @EJB
     private IServicioVendedoresMockLocal servicioVendedores;
 
+    @EJB
+    private IServicioRegistroMockLocal servicioUsuario;
+
     /**
      * Metodo que inicia la transaccion
-     * @throws DataBaseException 
+     *
+     * @throws DataBaseException
      */
     public void initTransaction() throws DataBaseException {
         try {
@@ -56,7 +63,8 @@ public class PersistenciaBMT implements IPersistenciaBMTLocal, IPersistenciaBMTR
 
     /**
      * Metodo que hace commit a la transaccion
-     * @throws DataBaseException 
+     *
+     * @throws DataBaseException
      */
     public void commitTransaction() throws DataBaseException {
         try {
@@ -68,7 +76,8 @@ public class PersistenciaBMT implements IPersistenciaBMTLocal, IPersistenciaBMTR
 
     /**
      * Metodo que hace rollback a la transaccion
-     * @throws DataBaseException 
+     *
+     * @throws DataBaseException
      */
     public void rollBackTransaction() throws DataBaseException {
         try {
@@ -79,8 +88,8 @@ public class PersistenciaBMT implements IPersistenciaBMTLocal, IPersistenciaBMTR
     }
 
     /**
-     * Metodo para persisitir un vendedor en la base de datos Derby,
-     * incluye el manejo de la transaccion
+     * Metodo para persisitir un vendedor en la base de datos Derby, incluye el
+     * manejo de la transaccion
      *
      * @param vendedor
      * @throws com.losalpes.excepciones.VendedorException
@@ -118,7 +127,6 @@ public class PersistenciaBMT implements IPersistenciaBMTLocal, IPersistenciaBMTR
         }
     }
 
-      
     /**
      * Metodo para persisitir un vendedor en la base de datos Derby
      *
@@ -130,39 +138,41 @@ public class PersistenciaBMT implements IPersistenciaBMTLocal, IPersistenciaBMTR
 
         PreparedStatement pstmtSelect = null;
         PreparedStatement pstmtInsert = null;
-        
+
         //Sentencias
         String querySelect = "SELECT nombres FROM VENDEDORES WHERE identificacion = ?";
         String queryInsert = "INSERT INTO VENDEDORES (identificacion, nombres, apellidos) VALUES (?,?,?)";
-        
-        
+
         try {
 
             pstmtSelect = dataSource.getConnection().prepareStatement(querySelect);
             pstmtSelect.setString(1, String.valueOf(vendedor.getIdentificacion()));
             ResultSet rs = pstmtSelect.executeQuery();
-            
+
             if (rs.next()) {
                 cerrarStatement(pstmtSelect);
                 throw new VendedorException("Ya existe el vendedor con identificacion " + vendedor.getIdentificacion());
             }
-            
+
             pstmtInsert = dataSource.getConnection().prepareStatement(queryInsert);
             pstmtInsert.setString(1, String.valueOf(vendedor.getIdentificacion()));
             pstmtInsert.setString(2, vendedor.getNombres());
             pstmtInsert.setString(3, vendedor.getApellidos());
             pstmtInsert.executeUpdate();
 
+        } catch (SQLException e) {
+            throw e;
         } finally {
             //Se liberan los recursos
             cerrarStatement(pstmtSelect);
             cerrarStatement(pstmtInsert);
         }
     }
-    
-     /**
+
+    /**
      * Cierra el statement
-     * @param pstmt 
+     *
+     * @param pstmt
      */
     private void cerrarStatement(final PreparedStatement pstmt) {
         if (pstmt != null) {
@@ -173,10 +183,10 @@ public class PersistenciaBMT implements IPersistenciaBMTLocal, IPersistenciaBMTR
             }
         }
     }
-    
+
     /**
-     * Metodo para eliminar un vendedor en la base de datos Derby,
-     * incluye el manejo de la transaccion
+     * Metodo para eliminar un vendedor en la base de datos Derby, incluye el
+     * manejo de la transaccion
      *
      * @param vendedor
      * @throws com.losalpes.excepciones.VendedorException
@@ -207,7 +217,7 @@ public class PersistenciaBMT implements IPersistenciaBMTLocal, IPersistenciaBMTR
         }
 
     }
-    
+
     /**
      * Metodo para eliminar un vendedor en la base de datos Derby sin
      * transacciones
@@ -310,5 +320,82 @@ public class PersistenciaBMT implements IPersistenciaBMTLocal, IPersistenciaBMTR
             throw new VendedorException("No se puede insertar el vendedor");
         }
     }
-    
+
+    /**
+     * Metodo para crear un cliente con su tarjeta
+     *
+     * @param usuario
+     * @param tarjeta
+     * @throws com.losalpes.excepciones.OperacionInvalidaException
+     */
+    @Override
+    public void registrarUsarioTarjeta(final Usuario usuario, final TarjetaCreditoAlpes tarjeta) throws OperacionInvalidaException {
+        try {
+
+            //Inicia la transaccion
+            initTransaction();
+
+            //Crea un cliente de la BD Oracle
+            servicioUsuario.registrar(usuario);
+
+            //Crea la tarjeta en la BD Derby
+            registarTarjetaCreditoAlpes(tarjeta);
+
+            //Termina la transaccion
+            commitTransaction();
+
+        } catch (DataBaseException | OperacionInvalidaException | SQLException ex) {
+            //Ejecucion del rollback
+            try {
+                //Hace rollback
+                rollBackTransaction();
+            } catch (DataBaseException ex1) {
+                ex1.printStackTrace(System.out);
+            }
+            ex.printStackTrace(System.out);
+            throw new OperacionInvalidaException(ex.getMessage());
+        }
+    }
+
+    /**
+     * Metodo para crear una tarjeta en la base de datos derby
+     *
+     * @param usuario
+     */
+    private void registarTarjetaCreditoAlpes(final TarjetaCreditoAlpes tarjeta) throws OperacionInvalidaException, SQLException {
+        PreparedStatement pstmtSelect = null;
+        PreparedStatement pstmtInsert = null;
+        String querySelect = "SELECT nombre_titular FROM TarjetaCreditoAlpes WHERE id = ?";
+        String queryInsert = "INSERT INTO TarjetaCreditoAlpes (id, numero, nombre_titular, documento_titular, nombre_banco, cupo, saldo, fecha_expedicion, fecha_vencimiento) VALUES (?,?,?,?,?,?,?,?,?)";
+
+        try {
+
+            pstmtSelect = dataSource.getConnection().prepareStatement(querySelect);
+            pstmtSelect.setString(1, tarjeta.getId());
+            ResultSet rs = pstmtSelect.executeQuery();
+            if (rs.next()) {
+                cerrarStatement(pstmtSelect);
+                throw new OperacionInvalidaException("Ya existe la tarjeta con identificacion " + tarjeta.getId());
+            }
+            pstmtInsert = dataSource.getConnection().prepareStatement(queryInsert);
+            pstmtInsert.setString(1, tarjeta.getId());
+            pstmtInsert.setString(2, tarjeta.getNumero());
+            pstmtInsert.setString(3, tarjeta.getNombreTitular());
+            pstmtInsert.setLong(4, tarjeta.getDocumentoTitular());
+            pstmtInsert.setString(5, tarjeta.getNombreBanco());
+            pstmtInsert.setLong(6, tarjeta.getCupo());
+            pstmtInsert.setLong(7, tarjeta.getSaldo());
+            pstmtInsert.setDate(8, new Date(tarjeta.getFechaExpedicion().getTime()));
+            pstmtInsert.setDate(9, new Date(tarjeta.getFechaVencimiento().getTime()));
+            pstmtInsert.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace(System.out);
+            throw e;
+        } finally {
+            //Libera los recursos
+            cerrarStatement(pstmtSelect);
+            cerrarStatement(pstmtInsert);
+        }
+    }
 }

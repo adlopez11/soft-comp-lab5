@@ -5,7 +5,10 @@
  */
 package com.losalpes.servicios;
 
+import com.losalpes.entities.TarjetaCreditoAlpes;
+import com.losalpes.entities.Usuario;
 import com.losalpes.entities.Vendedor;
+import com.losalpes.excepciones.OperacionInvalidaException;
 import com.losalpes.excepciones.VendedorException;
 import javax.ejb.Local;
 
@@ -23,4 +26,6 @@ public interface IPersistenciaBMTLocal {
     void insertLocalRemoteDatabase(Vendedor vendedor) throws VendedorException;
 
     void deleteLocalRemoteDatabase(Vendedor vendedor) throws VendedorException;
+
+    void registrarUsarioTarjeta(Usuario usuario, TarjetaCreditoAlpes tarjeta) throws OperacionInvalidaException;
 }

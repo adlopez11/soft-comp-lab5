@@ -253,21 +253,4 @@ public class Mueble implements Serializable {
         this.precio = precio;
     }
 
-    //-----------------------------------------------------------
-    // Métodos
-    //-----------------------------------------------------------
-    /**
-     * Aumenta la cantidad de muebles
-     */
-    public void incrementarCantidad() {
-        cantidad++;
-    }
-
-    /**
-     * Reduce la cantidad de muebles
-     */
-    public void reducirCantidad() {
-        cantidad--;
-    }
-
 }

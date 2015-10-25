@@ -11,141 +11,141 @@
 
     <ui:param name="titulo" value="Catálogo de muebles" />
     <ui:define name="body">
-        
+
         <h:form>
-                <div align="right" style="padding-right: 10px">
-                    <h:commandButton style="background: transparent" image="./resources/img/pag/atras.png" action="menu.jsf"/>
-                </div>
+            <div align="right" style="padding-right: 10px">
+                <h:commandButton style="background: transparent" image="./resources/img/pag/atras.png" action="menu.jsf"/>
+            </div>
         </h:form>
         <h:outputText id="linkHeader"
-                          value="Administración de Muebles" style="color:white"/>
+                      value="Administración de Muebles" style="color:white"/>
         <p:fieldset legend="Muebles del Sistema">
+            <h:form>
+                <!-- Panel para agregar un nuevo mueble -->
+                <h:panelGroup>
+
+                    <h:panelGrid width="100px" columns="1" columnClasses="pnlGrdClass, pnlGrdClass, pnlGrdClassLong">
+                        <h:outputLabel for="TxtNombre"
+                                       value="Nombre" />
+                        <h:inputText id="TxtNombre"
+                                     maxlength="20"
+                                     size="20"
+                                     value="#{catalogoBean.mueble.nombre}"
+                                     label="Nombre"
+                                     required="true">
+                            <f:validateLength minimum="1"/>
+                        </h:inputText>
+                        <h:message id="pwMsg" for="TxtNombre" />
+                    </h:panelGrid>
+
+                    <h:panelGrid width="100px" columns="1" columnClasses="pnlGrdClass, pnlGrdClass, pnlGrdClassLong">
+                        <h:outputLabel for="TxtPrecio"
+                                       value="Precio" />
+                        <h:inputText id="TxtPrecio"
+                                     maxlength="20"
+                                     size="20"
+                                     value="#{catalogoBean.mueble.precio}"
+                                     label="Precio"
+                                     required="true">
+                            <f:validateLength minimum="1"/>
+                        </h:inputText>
+                        <h:message id="precioMsg" for="TxtPrecio" />
+                    </h:panelGrid>
+
+                    <h:panelGrid width="100px" columns="1" columnClasses="pnlGrdClass, pnlGrdClass, pnlGrdClassLong">
+                        <h:outputLabel for="TxtNombre"
+                                       value="Cantidad" />
+                        <h:inputText id="TxtCantidad"
+                                     maxlength="20"
+                                     size="20"
+                                     value="#{catalogoBean.mueble.cantidad}"
+                                     label="Cantidad"
+                                     required="true">
+                            <f:validateLength minimum="1"/>
+                        </h:inputText>
+                        <h:message id="nombreMsg" for="TxtCantidad" />
+                    </h:panelGrid>
+
+                    <h:panelGrid width="100px" columns="1" columnClasses="pnlGrdClass, pnlGrdClass, pnlGrdClassLong">
+
+                        <h:outputLabel for="TxtDescripcion" value="Descripción" />
+                        <h:inputTextarea id="TxtDescripcion"
+                                         value="#{catalogoBean.mueble.descripcion}"
+                                         rows="4" style="width: 125px"
+                                         label="Descripción"
+                                         >
+                            <f:validateLength minimum="1"/>
+
+                        </h:inputTextarea>
+                        <h:message id="descMsg" for="TxtDescripcion" />
+
+                    </h:panelGrid>
+
+                    <h:panelGrid width="100px" columns="1" columnClasses="pnlGrdClass, pnlGrdClass, pnlGrdClassLong">
+                        <h:outputLabel for="tipo_txt" value="Tipo" />
+                        <h:selectOneMenu id="tipo_txt" value="#{catalogoBean.mueble.tipo}" label="Tipo" style="width: 125px">
+                            <f:selectItems value="#{catalogoBean.tiposMuebles}" />
+                        </h:selectOneMenu>
+                    </h:panelGrid>
+
+                    <h:panelGrid width="100px" columns="1" columnClasses="pnlGrdClass, pnlGrdClass, pnlGrdClassLong">
+                        <h:outputLabel for="TxtImagen" value="Imagen" />
+                        <h:selectOneMenu id="TxtImagen" value="#{catalogoBean.mueble.imagen}" label="Tipo" style="width: 125px">
+                            <f:selectItem itemLabel="Cama" itemValue="bed" />
+                            <f:selectItem itemLabel="Camarote" itemValue="camarote" />
+                            <f:selectItem itemLabel="Mesa Jardin" itemValue="mesaJardin" />
+                            <f:selectItem itemLabel="Sila Neo Clasica" itemValue="neoClasica" />
+                            <f:selectItem itemLabel="Sila New Wave" itemValue="newWave" />
+                            <f:selectItem itemLabel="Sila Clasica" itemValue="sillaClasica" />
+                            <f:selectItem itemLabel="Sila Moderna" itemValue="sillaModerna" />
+                            <f:selectItem itemLabel="Sila Naranja" itemValue="sillaNaranja" />
+                        </h:selectOneMenu>
+                    </h:panelGrid>
+
+                    <h:commandButton value="Agregar" action="#{catalogoBean.agregarMueble}" />
+                    <h:commandButton value="Nuevo" action="#{catalogoBean.limpiar}" />
+                </h:panelGroup>
+
+            </h:form>
+        </p:fieldset>
         <h:form>
-            <!-- Panel para agregar un nuevo mueble -->
-            <h:panelGroup>
-                <h:panelGrid width="100px" columns="1" columnClasses="pnlGrdClass, pnlGrdClass, pnlGrdClassLong">
-                    <h:outputLabel for="TxtReferencia"
-                                     value="Referencia"/>
-                    <h:inputText id="TxtReferencia"
-                                   size="20"
-                                   maxlength="20"
-                                   label="Referencia"
-                                   value="#{catalogoBean.mueble.referencia}"
-                                   required="true"
-                                   >
-                        <f:validateLength minimum="1"/>
-                    </h:inputText>
-                    <h:message id="nameMsg" for="TxtReferencia" />
-                </h:panelGrid>
-                   
-                <h:panelGrid width="100px" columns="1" columnClasses="pnlGrdClass, pnlGrdClass, pnlGrdClassLong">
-                    <h:outputLabel for="TxtNombre"
-                                     value="Nombre" />
-                    <h:inputText id="TxtNombre"
-                                   maxlength="20"
-                                   size="20"
-                                   value="#{catalogoBean.mueble.nombre}"
-                                   label="Nombre"
-                                   required="true">
-                        <f:validateLength minimum="1"/>
-                    </h:inputText>
-                    <h:message id="pwMsg" for="TxtNombre" />
-                </h:panelGrid>
-                
-                <h:panelGrid width="100px" columns="1" columnClasses="pnlGrdClass, pnlGrdClass, pnlGrdClassLong">
-                    <h:outputLabel for="TxtPrecio"
-                                     value="Precio" />
-                    <h:inputText id="TxtPrecio"
-                                   maxlength="20"
-                                   size="20"
-                                   value="#{catalogoBean.mueble.precio}"
-                                   label="Precio"
-                                   required="true">
-                        <f:validateLength minimum="1"/>
-                    </h:inputText>
-                    <h:message id="precioMsg" for="TxtPrecio" />
-                </h:panelGrid>
-                
-                <h:panelGrid width="100px" columns="1" columnClasses="pnlGrdClass, pnlGrdClass, pnlGrdClassLong">
-                    <h:outputLabel for="TxtNombre"
-                                     value="Nombre" />
-                    <h:inputText id="TxtCantidad"
-                                   maxlength="20"
-                                   size="20"
-                                   value="#{catalogoBean.mueble.cantidad}"
-                                   label="Cantidad"
-                                   required="true">
-                        <f:validateLength minimum="1"/>
-                    </h:inputText>
-                    <h:message id="nombreMsg" for="TxtCantidad" />
-                </h:panelGrid>
 
-                <h:panelGrid columns="1" width="100px"
-                               columnClasses="pnlGrdClass, pnlGrdClass, pnlGrdClassLong">
 
-                    <h:outputLabel for="TxtDescripcion" value="Descripción" />
-                    <h:inputTextarea id="TxtDescripcion"
-                                       value="#{catalogoBean.mueble.descripcion}"
-                                       rows="4" style="width: 125px"
-                                       label="Descripción"
-                                       >
-                        <f:validateLength minimum="1"/>
+            <!-- Se crea una tabla donde se presentan los muebles del sistema -->
+            <p:dataTable
+                id="data"
+                value="#{catalogoBean.muebles}"
+                var="file"
+                scrollable="false"
+                scrollHeight="100px"
+                paginator="true"
+                paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                resizableColumns="true"
+                rows="5">
 
-                    </h:inputTextarea>
-                    <h:message id="descMsg" for="TxtDescripcion" />
 
-                </h:panelGrid>
-                <h:panelGrid>
-                    <h:selectOneMenu value="#{catalogoBean.mueble.tipo}" label="Tipo">
-                        <f:selectItems value="#{catalogoBean.tiposMuebles}" />
-                    </h:selectOneMenu>
-                </h:panelGrid>
+                <p:column headerText="Referencia" sortBy="#{file.referencia}">
+                    <h:outputText value="#{file.referencia}" />
+                </p:column>
 
-                <h:commandButton value="Agregar" action="#{catalogoBean.agregarMueble}" />
-                <h:commandButton value="Nuevo" action="#{catalogoBean.limpiar}" />
-            </h:panelGroup>
-            
-        </h:form>
-        </p:fieldset>     
-        <h:form>
-            
+                <p:column headerText="Nombre">
+                    <h:outputText value="#{file.nombre}" />
+                </p:column>
 
-                <!-- Se crea una tabla donde se presentan los muebles del sistema -->
-                <p:dataTable
-                    id="data"
-                    value="#{catalogoBean.muebles}"
-                    var="file"
-                    scrollable="false"
-                    scrollHeight="100px"
-                    paginator="true"
-                    paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                    resizableColumns="true"
-                    rows="5">
+                <p:column headerText="Descripción">
+                    <h:outputText value="#{file.descripcion}" />
+                </p:column>
 
-                           
-                    <p:column headerText="Referencia" sortBy="#{file.referencia}">
-                        <h:outputText value="#{file.referencia}" />
-                    </p:column>
-                    
-                    <p:column headerText="Nombre">
-                        <h:outputText value="#{file.nombre}" />
-                    </p:column>
-                    
-                    <p:column headerText="Descripción">
-                        <h:outputText value="#{file.descripcion}" />
-                    </p:column>
-                    
-                    <p:column headerText="Tipo">
-                        <h:outputText value="#{file.tipo}" />
-                    </p:column>
-                    
-                     <p:column headerText="Eliminar">
-                         <h:commandLink actionListener="#{catalogoBean.eliminarMueble}"
-                                             value="Eliminar" >
-                             <f:param name="muebleId" value="#{file.referencia}" />
-                         </h:commandLink>     
-                    </p:column>
-                </p:dataTable>
+                <p:column headerText="Tipo">
+                    <h:outputText value="#{file.tipo}" />
+                </p:column>
+
+                <p:column headerText="Eliminar">
+                    <h:commandLink actionListener="#{catalogoBean.eliminarMueble(file)}"
+                                   value="Eliminar" >
+                    </h:commandLink>
+                </p:column>
+            </p:dataTable>
 
         </h:form>
 

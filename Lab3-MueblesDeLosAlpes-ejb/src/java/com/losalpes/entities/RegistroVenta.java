@@ -207,4 +207,21 @@ public class RegistroVenta implements Serializable {
         this.registro = registro;
     }
 
+    //-----------------------------------------------------------
+    // Métodos
+    //-----------------------------------------------------------
+    /**
+     * Aumenta la cantidad de muebles
+     */
+    public void incrementarCantidad() {
+        cantidad++;
+    }
+
+    /**
+     * Reduce la cantidad de muebles
+     */
+    public void reducirCantidad() {
+        cantidad--;
+    }
+
 }

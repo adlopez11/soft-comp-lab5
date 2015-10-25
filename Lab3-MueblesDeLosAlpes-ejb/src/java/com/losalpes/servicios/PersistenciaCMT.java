@@ -177,7 +177,7 @@ public class PersistenciaCMT implements IPersistenciaCMTLocal, IPersistenciaCMTR
             //Crea la tarjeta en la BD Derby
             registarTarjetaCreditoAlpes(tarjeta);
 
-        } catch (Exception ex) {
+        } catch (OperacionInvalidaException | SQLException ex) {
             //Ejecucion del rollback
             sctx.setRollbackOnly();
             ex.printStackTrace(System.out);
@@ -190,7 +190,7 @@ public class PersistenciaCMT implements IPersistenciaCMTLocal, IPersistenciaCMTR
      *
      * @param usuario
      */
-    private void registarTarjetaCreditoAlpes(final TarjetaCreditoAlpes tarjeta) throws OperacionInvalidaException {
+    private void registarTarjetaCreditoAlpes(final TarjetaCreditoAlpes tarjeta) throws OperacionInvalidaException, SQLException {
         PreparedStatement pstmtSelect = null;
         PreparedStatement pstmtInsert = null;
         String querySelect = "SELECT nombre_titular FROM TarjetaCreditoAlpes WHERE id = ?";
@@ -222,7 +222,7 @@ public class PersistenciaCMT implements IPersistenciaCMTLocal, IPersistenciaCMTR
             //Ejecucion del rollback
             sctx.setRollbackOnly();
             e.printStackTrace(System.out);
-            throw new OperacionInvalidaException("Error al crear la tarjeta de credito");
+            throw e;
         } finally {
             //Libera los recursos
             cerrarStatement(pstmtSelect);

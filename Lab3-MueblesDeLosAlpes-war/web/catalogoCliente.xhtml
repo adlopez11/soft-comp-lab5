@@ -12,7 +12,7 @@
 
     <ui:param name="titulo" value="Catálogo de muebles" />
     <ui:define name="body">
-       
+
         <script type="text/javascript">
             function handleDrop(event, ui) {
                 var droppedMueble = ui.draggable;
@@ -43,7 +43,7 @@
                     <p:dataGrid id="availableMuebles" var="mueble" value="#{carritoBean.muebles}" columns="3">
                         <p:panel id="pnl" header="#{mueble.nombre}" style="text-align:center">
                             <h:panelGrid columns="1" style="width:100%">
-                                <h:graphicImage width="128" height="128" style="float:right"                    
+                                <h:graphicImage width="128" height="128" style="float:right"
                                                 value="./resources/img/pag/#{mueble.imagen}.png"
                                                 alt="#{mueble.nombre}"/>
 
@@ -59,15 +59,15 @@
                         <h:outputText value="!!!Arrastrar Aqui!!!" rendered="#{empty carritoBean.inventario}" style="font-size:24px;" />
                         <p:dataTable id="selectedCarsTable" var="cartItem" value="#{carritoBean.inventario}" rendered="#{not empty carritoBean.inventario}">
                             <p:column headerText="Nombre">
-                                <h:outputText value="#{cartItem.nombre}" />
+                                <h:outputText value="#{cartItem.producto.nombre}" />
                             </p:column>
 
                             <p:column headerText="Descripcion">
-                                <h:outputText value="#{cartItem.descripcion}" />
+                                <h:outputText value="#{cartItem.producto.descripcion}" />
                             </p:column>
 
                             <p:column headerText="Precio">
-                                <h:outputText value="#{cartItem.precio}" />
+                                <h:outputText value="#{cartItem.producto.precio}" />
                             </p:column>
 
                             <p:column headerText="Cantidad">
@@ -75,14 +75,12 @@
                             </p:column>
 
                             <p:column headerText="Costo">
-                                <h:outputText value="$ #{cartItem.precio * cartItem.cantidad}"/>
+                                <h:outputText value="$ #{cartItem.producto.precio * cartItem.cantidad}"/>
                             </p:column>
 
                             <p:column headerText="Eliminar">
-                                <h:commandLink actionListener="#{carritoBean.removerItemCarrito}"
-                                               value="Eliminar" >
-                                    <f:param name="muebleId" value="#{cartItem.referencia}" />
-                                </h:commandLink>     
+                                <h:commandLink actionListener="#{carritoBean.removerItemCarrito(cartItem)}"
+                                               value="Eliminar" />
                             </p:column>
                         </p:dataTable>
                     </p:outputPanel>
@@ -101,7 +99,7 @@
                             value="Total: "/>
                         <h:outputText
                             style="display: inline;"
-                            value="$ #{carritoBean.precioTotal}" >
+                            value="$ #{carritoBean.precioTotal}     " >
                             <f:convertNumber type="currency"
                                              groupingUsed="true" maxFractionDigits="2" />
                         </h:outputText>
@@ -157,8 +155,8 @@
                             </p:column>
 
                         </p:dataTable>
-                    </p:fieldset>    
-                </h:panelGroup>    
+                    </p:fieldset>
+                </h:panelGroup>
             </h:form>
         </h:panelGroup>
     </ui:define>

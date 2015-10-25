@@ -27,5 +27,5 @@ public interface IPersistenciaCMTLocal {
 
     void deleteLocalRemoteDatabase(Vendedor vendedor) throws VendedorException;
 
-    public void registrarUsarioTarjeta(Usuario usuario, TarjetaCreditoAlpes tarjeta) throws OperacionInvalidaException;
+    void registrarUsarioTarjeta(Usuario usuario, TarjetaCreditoAlpes tarjeta) throws OperacionInvalidaException;
 }
