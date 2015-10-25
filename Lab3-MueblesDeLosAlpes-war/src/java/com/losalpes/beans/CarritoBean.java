@@ -13,7 +13,9 @@ package com.losalpes.beans;
 import com.losalpes.entities.Mueble;
 import com.losalpes.entities.RegistroVenta;
 import com.losalpes.entities.Usuario;
+import com.losalpes.excepciones.CupoInsuficienteException;
 import com.losalpes.excepciones.OperacionInvalidaException;
+import com.losalpes.servicios.IPersistenciaCMTLocal;
 import com.losalpes.servicios.IServicioCarritoMockLocal;
 import com.losalpes.servicios.IServicioCatalogoMockLocal;
 import java.io.Serializable;
@@ -44,6 +46,23 @@ public class CarritoBean implements Serializable {
      */
     @EJB
     private IServicioCatalogoMockLocal catalogo;
+
+    /**
+     * Relación con la interfaz que provee los servicios necesarios para
+     * administrar ambas bases de datos
+     */
+    @EJB
+    private IPersistenciaCMTLocal persistenciaCMTService;
+
+    /**
+     * Guarda el metodo de pago al momento de pagar
+     */
+    private String metodoPago;
+
+    /**
+     * Guarda el metodo de pago al momento de pagar
+     */
+    private String mensaje;
 
     //-----------------------------------------------------------
     // Constructor
@@ -107,9 +126,20 @@ public class CarritoBean implements Serializable {
             LoginBean sessionSecurity = (LoginBean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("loginBean");
             Usuario user = sessionSecurity.getSesion();
             if (user != null) {
-                carrito.comprar(user);
+                try {
+                    if (metodoPago.equals("Efectivo")) {
+                        carrito.comprar(user);
+                    } else {
+                        persistenciaCMTService.comprar(carrito.getInventario(), user);
+                    }
+                    destroyBean();
+                } catch (CupoInsuficienteException ex) {
+                    ex.printStackTrace(System.out);
+                    mensaje = "No tiene saldo para comprar con su tarjeta";
+                }
+
             }
-            destroyBean();
+
         }
     }
 
@@ -145,6 +175,22 @@ public class CarritoBean implements Serializable {
      */
     public void destroyBean() {
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("carritoBean");
+    }
+
+    public String getMetodoPago() {
+        return metodoPago;
+    }
+
+    public void setMetodoPago(String metodoPago) {
+        this.metodoPago = metodoPago;
+    }
+
+    public String getMensaje() {
+        return mensaje;
+    }
+
+    public void setMensaje(String mensaje) {
+        this.mensaje = mensaje;
     }
 
 }

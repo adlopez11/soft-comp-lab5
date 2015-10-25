@@ -110,7 +110,14 @@
                 <br></br>
                 <p:separator/>
                 <h:panelGroup style="background-color: white">
+                    <h:outputLabel for="TxtImagen" value="Metodo de Pago" />
+                    <h:selectOneMenu id="TxtImagen" value="#{carritoBean.metodoPago}" label="Metodo de Pago" style="width: 125px">
+                        <f:selectItem itemLabel="TarjetaCreditoAlpes" itemValue="TarjetaCreditoAlpes" />
+                        <f:selectItem itemLabel="Efectivo" itemValue="Efectivo" />
+                    </h:selectOneMenu>
                     <h:commandButton value="Comprar" action="#{carritoBean.comprar}"/>
+                    <br/>
+                    <h:outputText value="#{registroBean.mensaje}"/>
                 </h:panelGroup>
                 <p:separator/>
                 <h:panelGroup style="background-color: white">
