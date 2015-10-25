@@ -57,7 +57,7 @@
                                                  label="Cargo">
                                         <f:validateLength minimum="6"/>
                                     </p:inputText>
-                                    <p:message id="imgMsg" for="TxtCargo" />    
+                                    <p:message id="imgMsg" for="TxtCargo" />
                                 </div>
                             </div>
                         </div>
@@ -91,7 +91,7 @@
                                     <p:message id="DescMsg" for="TxtDescripcion" />
                                 </div>
                             </div>
-                        </div> 
+                        </div>
 
                     </p:tab>
                 </p:accordionPanel>
@@ -131,7 +131,7 @@
                                                  label="Apellidos">
                                         <f:validateLength minimum="7" maximum="15"/>
                                     </p:inputText>
-                                    <p:message id="imgMsg" for="TxtApellido" />    
+                                    <p:message id="imgMsg" for="TxtApellido" />
                                 </div>
                             </div>
                         </div>
@@ -147,7 +147,7 @@
                                                  value="#{vendedorBean.vendedor.salario}"
                                                  required="true"
                                                  label="Salario">
-                                        <f:validateLength minimum="2" /> 
+                                        <f:validateLength minimum="2" />
                                     </p:inputText>
                                     <p:message id="anoMsg" for="TxtSalario" />
                                 </div>
@@ -167,10 +167,10 @@
 
                                 </div>
                             </div>
-                        </div> 
+                        </div>
                         <div class="ui-grid ui-grid-responsive">
                             <div class="ui-grid-row">
-                                <div class="ui-grid-col-12">
+                                <div class="ui-grid-col-6">
                                     <p:outputLabel for="TxtPerfil"
                                                    value="Perfil"
                                                    style="font-weight: bold"/>
@@ -185,8 +185,44 @@
                                     <p:message id="perfilMsg" for="TxtPerfil" />
                                 </div>
 
+                                <div class="ui-grid-col-6">
+                                    <h:outputLabel for="TxtImagen" value="Imagen" />
+                                    <h:selectOneMenu id="TxtImagen" value="#{vendedorBean.vendedor.foto}" label="Foto">
+                                        <f:selectItem itemLabel="Imagen 1" itemValue="vendedor1" />
+                                        <f:selectItem itemLabel="Imagen 2" itemValue="vendedor2" />
+                                    </h:selectOneMenu>
+                                </div>
                             </div>
-                        </div>    
+                        </div>
+                        <br/>
+                        <br/>
+                        <p:dataList value="#{vendedorBean.vendedor.experiencia}"  var="exp" paginator="true" rows="5">
+                            <f:facet name="header" >
+                                Experiencia
+                            </f:facet>
+
+                            <h:panelGrid columns="2" style="width:100%" columnClasses="logo,detail">
+                                <p:outputPanel>
+                                    <h:panelGrid columns="2" cellpadding="5">
+                                        <h:outputText value="Identificación:" />
+                                        <h:outputText value="#{employee.identificacion}" style="font-weight: bold"/>
+
+                                        <h:outputText value="Perfil:" />
+                                        <h:outputText value="#{employee.perfil}" style="font-weight: bold"/>
+
+                                        <h:outputText value="Salario: $ " />
+                                        <h:outputText value="#{employee.salario}" style="font-weight: bold"/>
+                                    </h:panelGrid>
+                                </p:outputPanel>
+                            </h:panelGrid>
+                            <center>
+                                <h:commandButton id="DDRtn" action="#{vendedorBean.eliminarVendedor}"
+                                                 value="Eliminar"  >
+                                    <f:param name="vendedorId" value="#{employee.identificacion}"/>
+
+                                </h:commandButton>
+                            </center>
+                        </p:dataList>
                     </p:tab>
                 </p:accordionPanel>
                 <h:commandButton value="Agregar vendedor" action="#{vendedorBean.agregarVendedor}"/>
@@ -196,39 +232,32 @@
         <h:form>
             <h:panelGroup>
                 <!-- Se crea una tabla donde se presentan los vendedores del sistema -->
-                <p:dataList value="#{vendedorBean.vendedores}"  var="employee" paginator="true" rows="5">
+                <p:dataTable value="#{vendedorBean.vendedores}"  var="employee" paginator="true" rows="10">
                     <f:facet name="header" >
                         Datos de los vendedores
                     </f:facet>
 
-                    <h:panelGrid columns="2" style="width:100%" columnClasses="logo,detail">
-                        <h:graphicImage width="128" height="128" style="float:right"                    
-                        value="./resources/img/pag/#{employee.foto}.png" />
-                        
-                        <p:outputPanel>
-                            <h:panelGrid columns="2" cellpadding="5">
-                                <h:outputText value="Identificación:" />
-                                <h:outputText value="#{employee.identificacion}" style="font-weight: bold"/>
-                                
-                                <h:outputText value="Perfil:" />
-                                <h:outputText value="#{employee.perfil}" style="font-weight: bold"/>
-
-                                <h:outputText value="Salario: $ " />
-                                <h:outputText value="#{employee.salario}" style="font-weight: bold"/>
-                            </h:panelGrid>
-                        </p:outputPanel>
-                    </h:panelGrid>
-                    <center>
+                    <p:column headerText="Imagen">
+                        <h:graphicImage width="128" height="128" style="float:right"
+                                        value="./resources/img/pag/#{employee.foto}.png" />
+                    </p:column>
+                    <p:column headerText="Identificación">
+                        <h:outputText value="#{employee.identificacion}" style="font-weight: bold"/>
+                    </p:column>
+                    <p:column headerText="Perfil">
+                        <h:outputText value="#{employee.perfil}" style="font-weight: bold"/>
+                    </p:column>
+                    <p:column headerText="Salario $">
+                        <h:outputText value="#{employee.salario}" style="font-weight: bold"/>
+                    </p:column>
+                    <p:column headerText="Eliminar">
                         <h:commandButton id="DDRtn" action="#{vendedorBean.eliminarVendedor}"
                                          value="Eliminar"  >
                             <f:param name="vendedorId" value="#{employee.identificacion}"/>
-                        
-                        </h:commandButton> 
-                    </center>
-                </p:dataList>
-
-
-            </h:panelGroup>     
+                        </h:commandButton>
+                    </p:column>
+                </p:dataTable
+            </h:panelGroup>
         </h:form>
     </ui:define>
 

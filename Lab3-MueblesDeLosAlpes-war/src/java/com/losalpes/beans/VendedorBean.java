@@ -1,15 +1,13 @@
 /**
- * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- * $Id$ VendedorBean.java
- * Universidad de los Andes (Bogotá - Colombia)
- * Departamento de Ingeniería de Sistemas y Computación
- * Licenciado bajo el esquema Academic Free License version 3.0
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ $Id$
+ * VendedorBean.java Universidad de los Andes (Bogotá - Colombia) Departamento
+ * de Ingeniería de Sistemas y Computación Licenciado bajo el esquema Academic
+ * Free License version 3.0
  *
  * Ejercicio: Muebles de los Alpes
- * 
+ *
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
-
 package com.losalpes.beans;
 
 import com.losalpes.entities.ExperienciaVendedor;
@@ -24,15 +22,13 @@ import javax.faces.context.FacesContext;
 
 /**
  * Managed Bean encargado de la administración de vendedores en el sistema
- * 
+ *
  */
-public class VendedorBean implements Serializable
-{
+public class VendedorBean implements Serializable {
 
     //-----------------------------------------------------------
     // Atributos
     //-----------------------------------------------------------
-
     /**
      * Relación con la interfaz que provee los servicios necesarios del vendedor
      */
@@ -52,103 +48,93 @@ public class VendedorBean implements Serializable
     //-----------------------------------------------------------
     // Constructor
     //-----------------------------------------------------------
-
     /**
      * Constructor sin argumentos de la clase
      */
-    public VendedorBean()
-    {
-        vendedor=new Vendedor();
-        experiencia=new ExperienciaVendedor();
+    public VendedorBean() {
+        vendedor = new Vendedor();
+        experiencia = new ExperienciaVendedor();
     }
 
     //-----------------------------------------------------------
     // Getters y setters
     //-----------------------------------------------------------
-
     /**
      * Devuelve el objeto de vendedor actual
+     *
      * @return vendedor Vendedor actual
      */
-    public Vendedor getVendedor()
-    {
+    public Vendedor getVendedor() {
         return vendedor;
     }
 
     /**
      * Modifica al vendedor actual
+     *
      * @param vendedor Nuevo vendedor
      */
-    public void setVendedor(Vendedor vendedor)
-    {
+    public void setVendedor(Vendedor vendedor) {
         this.vendedor = vendedor;
     }
 
     /**
      * Devuelve todos los vendedores del sistema
+     *
      * @return vendedores Lista con todos los vendedores del sistema
      */
-    public List<Vendedor> getVendedores()
-    {
+    public List<Vendedor> getVendedores() {
         return servicio.getVendedores();
     }
 
     /**
      * Devuelve el objeto actual de experiencia vendedor
+     *
      * @return experiencia Objeto de la experiencia del vendedor actual
      */
-    public ExperienciaVendedor getExperiencia()
-    {
+    public ExperienciaVendedor getExperiencia() {
         return experiencia;
     }
 
     /**
      * Modifica la experiencia del vendedor actual
+     *
      * @param experiencia Nueva experiencia del vendedor
      */
-    public void setExperiencia(ExperienciaVendedor experiencia)
-    {
+    public void setExperiencia(ExperienciaVendedor experiencia) {
         this.experiencia = experiencia;
     }
 
     //-----------------------------------------------------------
     // Métodos
     //-----------------------------------------------------------
-
     /**
      * Agrega un nuevo vendedor al sistema
+     *
      * @throws com.losalpes.excepciones.OperacionInvalidaException
      */
-    public void agregarVendedor() throws OperacionInvalidaException
-    {
-        try 
-        {
+    public void agregarVendedor() throws OperacionInvalidaException {
+        try {
             servicio.agregarVendedor(vendedor);
-            vendedor=new Vendedor();
-            experiencia=new ExperienciaVendedor();
-        }
-        catch (OperacionInvalidaException ex)
-        {
+            vendedor = new Vendedor();
+            experiencia = new ExperienciaVendedor();
+        } catch (OperacionInvalidaException ex) {
             throw new OperacionInvalidaException(ex.getMessage());
         }
     }
 
     /**
      * Elimina un vendedor del sistema
+     *
      * @throws com.losalpes.excepciones.OperacionInvalidaException
      */
-    public void eliminarVendedor() throws OperacionInvalidaException
-    {
+    public void eliminarVendedor() throws OperacionInvalidaException {
         FacesContext context = FacesContext.getCurrentInstance();
         Map map = context.getExternalContext().getRequestParameterMap();
 
-        long vendedorId=Long.parseLong((String)map.get("vendedorId"));
-        try
-        {
+        long vendedorId = Long.parseLong((String) map.get("vendedorId"));
+        try {
             servicio.eliminarVendedor(vendedorId);
-        }
-        catch (OperacionInvalidaException ex)
-        {
+        } catch (OperacionInvalidaException ex) {
             throw new OperacionInvalidaException(ex.getMessage());
         }
     }
@@ -156,11 +142,8 @@ public class VendedorBean implements Serializable
     /**
      * Agrega un item de experiencia a lista de experiencia del vendedor
      */
-    public void agregarItemExperiencia()
-    {
-        long id=vendedor.getExperiencia().size()+1;
-        experiencia.setId(id);
+    public void agregarItemExperiencia() {
         vendedor.setItemExperiencia(experiencia);
-        experiencia=new ExperienciaVendedor();
+        experiencia = new ExperienciaVendedor();
     }
 }

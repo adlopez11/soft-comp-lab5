@@ -14,6 +14,7 @@ import com.losalpes.entities.Mueble;
 import com.losalpes.entities.RegistroVenta;
 import com.losalpes.entities.Usuario;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Contrato funcional de los servicios para el carrito de compras
@@ -55,6 +56,14 @@ public interface IServicioCarritoMockLocal {
      * @param usuario Usuario que realiza la compra
      */
     public void comprar(Usuario usuario);
+
+    /**
+     * Realiza la compra de los items que se envian como parametro
+     *
+     * @param ventas
+     * @param usuario Usuario que realiza la compra
+     */
+    public void comprar(List<RegistroVenta> ventas, Usuario usuario);
 
     /**
      * Agrega un nuevo mueble al carro de compras

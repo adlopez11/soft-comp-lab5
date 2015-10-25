@@ -16,6 +16,7 @@ import com.losalpes.entities.Usuario;
 import com.losalpes.excepciones.OperacionInvalidaException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 
@@ -113,9 +114,20 @@ public class ServicioCarritoMock implements IServicioCarritoMockRemote, IServici
      */
     @Override
     public void comprar(Usuario usuario) {
-        RegistroVenta item;
-        for (int i = 0; i < inventario.size(); i++) {
-            item = inventario.get(i);
+        comprar(inventario, usuario);
+    }
+
+    /**
+     * Realiza la compra de los items que se envian como parametro
+     *
+     * @param ventas
+     * @param usuario Usuario que realiza la compra
+     */
+    @Override
+    public void comprar(List<RegistroVenta> ventas, Usuario usuario) {
+
+        for (RegistroVenta item : ventas) {
+
             Mueble muebleEditar = (Mueble) persistencia.findById(Mueble.class, item.getProducto().getReferencia());
             muebleEditar.setCantidad(muebleEditar.getCantidad() - item.getCantidad());
             item.setComprador(usuario);
